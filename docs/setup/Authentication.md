@@ -5,26 +5,15 @@ Before you can start using the Shippo API, you'll need to register for a free Sh
 
 To create production shipping labels and make live requests, you must authenticate your requests using the live token. All code samples in these tutorials use your test token.
 
-cURL
 
-Ruby
 
-Python
-
-PHP
-
-Node
-
-Java
-
-C#
-
-```
+```json
 curl https://api.goshippo.com/shipments/\
     -H "Authorization: ShippoToken <API_TOKEN>"\
     -H "Content-Type: application/json"\
     -d '{...}'
 ```
+
 
 ### Client Libraries
 
