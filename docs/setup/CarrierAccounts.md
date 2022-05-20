@@ -132,11 +132,60 @@ Each carrier has its own type of fields. Browse the list below to find the requi
 FedEx
 -----
 
+```
+{
+  "carrier": "fedex",
+  "account_id": "321123", //Fedex account number
+  "parameters": {
+      "first_name": "Hippo",  //Your first name
+      "last_name": "Hippovich", // Your last name
+      "phone_number": "1234567890", // Your phone number
+    "smartpost_id": 5902, // Smartpost Hub ID (optional)
+    "from_address_st": "250 Union St", // Shipping address must match what you have on file with FedEx (see fedex.com profile)
+    "from_address_city": "San Francisco",
+    "from_address_state": "CA",
+    "from_address_zip": "94133",
+    "from_address_country_iso2": "US"
+  },
+  "active": true,
+  "test": false
+}
+```
+
 UPS
 ---
 
+```
+{
+    "carrier": "ups",
+    "account_id": "myupsuser", // UPS user ID
+    "parameters": {
+        "password": "HipposDontLie!", // UPS password
+        "account_number": "AB1234", // UPS account number
+        "surepost": false, // Add Surepost rating (optional)
+        "cost_center": "shippo", // Mail Innovations cost center (optional)
+        "usps_endorsement": "3" // Mail Innovations USPS endorsement (optional)
+    },
+    ...
+}
+```
+
 DHL Express
 -----------
+
+```
+{
+    "carrier": "dhl_express",
+    "account_id": "123456789", // DHL account number
+    "parameters": {
+        "password": "", // Password from DHL Express
+        "site_id": "", // Site ID from DHL Express
+        "payment_country": "US" // ISO2 code of the country associated with the account
+    },
+    "active": true,
+    "is_shippo_account": false
+}
+```
 
 DHL eCommerce
 -------------
@@ -431,3 +480,14 @@ Globegistics
 
 APC Postal
 ----------
+
+```
+{
+    "carrier": "apc_postal",
+    "account_id": "12345", // APC Postal Account ID
+    "parameters": {
+              "processing_site": "NJ" // APC Postal Processing Site
+               },
+    ...
+}
+```
