@@ -8,19 +8,7 @@ Create a New Manifest
 
 To create a manifest for your shipments, POST to the [Manifest endpoint](https://goshippo.com/docs/reference#manifests) with an array of the Transaction object_ids you're looking to create the Manifest for, along with your `carrier_account`, `shipment_date`, and `address_from` (required for USPS).
 
-cURL
 
-Ruby
-
-Python
-
-PHP
-
-Node
-
-Java
-
-C#
 
 ```
 curl https://api.goshippo.com/manifests/
