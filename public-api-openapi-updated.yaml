@@ -1,0 +1,5000 @@
+openapi: 3.0.0
+x-stoplight:
+  id: t2riwvlwf341k
+info:
+  description: Shippo Public API.
+  title: Shippo external API.
+  version: 1.0.0
+  x-logo:
+    url: 'https://285902-883982-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2021/06/Shippo-logo.svg'
+paths:
+  /addresses:
+    get:
+      description: List all addresses associated with the merchant
+      operationId: GetAllAddress
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedAddressResponse'
+      summary: List all addresses
+      tags:
+        - Addresses
+    post:
+      description: Creates a new address object
+      operationId: CreateAddress
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressRequestBody'
+        description: Address details.
+      responses:
+        '200':
+          $ref: '#/components/responses/singleAddressResponse'
+      summary: Create a new address
+      tags:
+        - Addresses
+  '/addresses/{AddressId}':
+    get:
+      description: Retrieve an existing address by object id for the merchant
+      operationId: GetAddress
+      parameters:
+        - description: Object ID of the address
+          in: path
+          name: AddressId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleAddressResponse'
+      summary: Retrieve an address
+      tags:
+        - Addresses
+  '/addresses/{AddressId}/validate':
+    get:
+      description: Validate an existing address by object id for the merchant
+      operationId: ValidateAddress
+      parameters:
+        - description: Object ID of the address
+          in: path
+          name: AddressId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleAddressResponse'
+      summary: Validate an address
+      tags:
+        - Addresses
+  /batches:
+    post:
+      description: Creates a new batch object.
+      operationId: CreateBatch
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchToCreate'
+        description: Batch details.
+      responses:
+        '200':
+          $ref: '#/components/responses/singleBatchResponse'
+      summary: Create a batch
+      tags:
+        - Batches
+  '/batches/{BatchId}':
+    get:
+      description: Retrieve an existing batch object.
+      operationId: GetBatch
+      parameters:
+        - description: Object ID of the batch
+          in: path
+          name: BatchId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleBatchResponse'
+      summary: Retrieve a batch
+      tags:
+        - Batches
+  '/batches/{BatchId}/add_shipments':
+    post:
+      description: Add batch shipments to an existing batch.
+      operationId: AddShipmentsToBatch
+      parameters:
+        - description: Object ID of the batch
+          in: path
+          name: BatchId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/BaseBatchShipment'
+              type: array
+        description: Array of shipments to add to the batch
+      responses:
+        '200':
+          $ref: '#/components/responses/singleBatchResponse'
+      summary: Add shipments to a batch
+      tags:
+        - Batches
+  '/batches/{BatchId}/purchase':
+    post:
+      description: 'Purchase an existing batch with an status of VALID. Once you send a POST request to the purchase endpoint the batch status will change to PURCHASING. When all the shipments are purchased, the status will change to PURCHASED and you will receive a batch_purchased webhook indicating that the batch has been purchased'
+      operationId: PurchaseBatch
+      parameters:
+        - description: Object ID of the batch
+          in: path
+          name: BatchId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleBatchResponse'
+      summary: Purchase a batch
+      tags:
+        - Batches
+  '/batches/{BatchId}/remove_shipments':
+    post:
+      description: Remove batch shipments from an existing batch.
+      operationId: RemoveShipmentsFromBatch
+      parameters:
+        - description: Object ID of the batch
+          in: path
+          name: BatchId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        description: Array of shipments object ids to remove from the batch
+      responses:
+        '200':
+          $ref: '#/components/responses/singleBatchResponse'
+      summary: Remove shipments from a batch
+      tags:
+        - Batches
+  /carrier_accounts:
+    get:
+      description: List all carrier accounts.
+      operationId: PlatformCarrierOwnAccountGetAll
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/platformCarrierOwnAccountListResponse'
+      summary: List all carrier accounts
+      tags:
+        - Carrier Own Accounts
+    post:
+      description: Creates a new carrier account or connects an existing carrier account to the Shippo account.
+      operationId: PlatformCarrierOwnAccountCreation
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectExistingOwnUPSAccountRequest'
+        description: Examples.
+        x-examples:
+          application/json:
+            fedex-existing-account-example:
+              summary: Connect an existing Fedex account to Shippo
+              value:
+                account_id: 321123
+                carrier: fedex
+                metadata: FEDEX Account
+                parameters:
+                  first_name: Hippo
+                  from_address_city: San Francisco
+                  from_address_country_iso2: US
+                  from_address_st: 250 Union St
+                  from_address_state: CA
+                  from_address_zip: 94133
+                  last_name: Hippovich
+                  meter: 118599345
+                  phone_number: 1112223333
+                  smartpost_id: 5902
+                test: false
+            ups-existing-account-example:
+              summary: Connect an existing UPS account to Shippo
+              value:
+                account_id: 123456
+                active: true
+                carrier: ups
+                metadata: UPS Account
+                parameters:
+                  account_number: 94567e
+                  aia_country_iso2: US
+                  billing_address_city: San Francisco
+                  billing_address_country_iso2: US
+                  billing_address_state: CA
+                  billing_address_street1: 731 Market St
+                  billing_address_street2: STE 200
+                  billing_address_zip: 94103
+                  collec_country_iso2: US
+                  collec_zip: 94103
+                  company: Shippo
+                  currency_code: USD
+                  email: hippo@goshippo.com
+                  full_name: Shippo Meister
+                  has_invoice: false
+                  invoice_controlid: 1234
+                  invoice_date: 20210529
+                  invoice_number: 1112234
+                  invoice_value: 11.23
+                  phone: 1112223333
+                  title: Manager
+                  ups_agreements: true
+                test: false
+            ups-new-account-example:
+              summary: Create a new UPS account
+              value:
+                account_id: 123456
+                active: true
+                carrier: ups
+                metadata: UPS Account
+                parameters:
+                  billing_address_city: San Francisco
+                  billing_address_country_iso2: US
+                  billing_address_state: CA
+                  billing_address_street1: 731 Market St
+                  billing_address_street2: STE 200
+                  billing_address_zip: 94103
+                  company: Shippo
+                  email: hippo@goshippo.com
+                  full_name: Shippo Meister
+                  phone: 1112223333
+                  pickup_address_city: San Francisco
+                  pickup_address_country_iso2: US
+                  pickup_address_same_as_billing_address: false
+                  pickup_address_state: CA
+                  pickup_address_street1: 731 Market St
+                  pickup_address_street2: STE 200
+                  pickup_address_zip: 94103
+                  ups_agreements: true
+                test: false
+      responses:
+        '201':
+          $ref: '#/components/responses/platformCarrierOwnAccountCreationResponse'
+        '400':
+          $ref: '#/components/responses/platformCarrierOwnAccountCreation400Response'
+      summary: Create a new carrier account
+      tags:
+        - Carrier Own Accounts
+      x-codeSamples:
+        - label: CLI
+          lang: cURL
+          source: |-
+            curl --location --request POST '/carrier_accounts/' \
+            --header 'Authorization: ShippoToken {{token}}' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+              "account_id": "string",
+              "active": true,
+              "carrier": "ups",
+              "metadata": "UPS Account",
+              "parameters": {
+                "billing_address_city": "San Francisco",
+                "billing_address_country_iso2": "US",
+                "billing_address_state": "CA",
+                "billing_address_street1": "731 Market St",
+                "billing_address_street2": "STE 200",
+                "billing_address_zip": "94103",
+                "company": "Shippo",
+                "email": "hippo@goshippo.com",
+                "full_name": "Thorn Hall",
+                "phone": "1112223333",
+                "pickup_address_city": "San Francisco",
+                "pickup_address_country_iso2": "US",
+                "pickup_address_same_as_billing_address": false,
+                "pickup_address_state": "CA",
+                "pickup_address_street1": "731 Market St",
+                "pickup_address_street2": "STE 200",
+                "pickup_address_zip": "94103",
+                "ups_agreements": true
+              },
+              "test": false
+            }'
+  /carrier_accounts/reg-status:
+    get:
+      description: Gets the registration status for the given account for the given carrier
+      operationId: CarrierRegisterStatus
+      parameters:
+        - in: query
+          name: carrier
+          required: true
+          schema:
+            type: string
+            enum:
+              - ups
+              - ' usps'
+              - ' canada_post'
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/carrierRegisterStatusGetResponse'
+      summary: Get Carrier Registration status
+      tags:
+        - Carrier Master Accounts
+  /carrier_accounts/register/new:
+    post:
+      description: Add a Shippo master carrier account to the merchant
+      operationId: PlatformCarrierRegistration
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCanadaPostMasterAccountRequest'
+        description: Examples.
+        x-examples:
+          application/json:
+            canada-example:
+              summary: Canada Post master account for the merchant
+              value:
+                carrier: canada_post
+                parameters:
+                  canada_post_terms: true
+                  company: Shippo
+                  email: hippo@goshippo.com
+                  full_name: Shippo Meister
+                  phone: 1112223333
+            hermes-uk-example:
+              summary: Hermes UK master account for the merchant
+              value:
+                carrier: hermes_uk
+                parameters: {}
+            ups-example:
+              summary: UPS master account for the merchant
+              value:
+                carrier: ups
+                parameters:
+                  billing_address_city: San Francisco
+                  billing_address_country_iso2: US
+                  billing_address_state: CA
+                  billing_address_street1: 731 Market St
+                  billing_address_street2: STE 200
+                  billing_address_zip: 94103
+                  company: Shippo
+                  email: hippo@goshippo.com
+                  full_name: Shippo Meister
+                  phone: 1112223333
+                  pickup_address_city: San Francisco
+                  pickup_address_country_iso2: US
+                  pickup_address_same_as_billing_address: false
+                  pickup_address_state: CA
+                  pickup_address_street1: 731 Market St
+                  pickup_address_street2: STE 200
+                  pickup_address_zip: 94103
+                  ups_agreements: true
+            usps-example:
+              summary: USPS master account for the merchant
+              value:
+                carrier: usps
+                parameters: {}
+      responses:
+        '201':
+          $ref: '#/components/responses/platformCarrierRegistrationResponse'
+        '400':
+          $ref: '#/components/responses/platformCarrierRegistration400Response'
+      summary: Add a Shippo master carrier account
+      tags:
+        - Carrier Master Accounts
+      x-codeSamples:
+        - label: CLI
+          lang: cURL
+          source: |-
+            curl --location --request POST '/carrier_accounts/register/new' \
+            --header 'Authorization: ShippoToken {{token}}' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+                "carrier": "canada_post",
+                "parameters": {
+                    "company": "Shippo",
+                    "full_name": "Shippo Meister",
+                    "email": "hippo@goshippo.com",
+                    "phone": "1112221122",
+                    "canada_post_terms": true
+                }
+            }'
+  '/carrier_accounts/{CarrierAccountId}':
+    get:
+      description: Retrieve an existing carrier account by object id.
+      operationId: PlatformCarrierOwnAccountGet
+      parameters:
+        - description: Object ID of the carrier account
+          in: path
+          name: CarrierAccountId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/platformCarrierOwnAccountCreationResponse'
+      summary: Retrieve a carrier account
+      tags:
+        - Carrier Own Accounts
+    put:
+      description: 'PUT request to update an existing carrier account object. The account_id and carrier can''t be updated, because they form the unique identifier together.'
+      operationId: PlatformCarrierOwnAccountUpdate
+      parameters:
+        - description: Object ID of the carrier account
+          in: path
+          name: CarrierAccountId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarrierAccountRequest'
+        description: Examples.
+        x-examples:
+          application/json:
+            update-carrier-account:
+              summary: Update a carrier account
+              value:
+                account_id: 123356
+                active: true
+                carrier: ups
+                parameters: {}
+      responses:
+        '200':
+          $ref: '#/components/responses/platformCarrierOwnAccountCreationResponse'
+      summary: Update a carrier account
+      tags:
+        - Carrier Own Accounts
+  /customs/declarations:
+    get:
+      description: List all customs declaration objects
+      operationId: GetAllCustomsDeclarations
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedCustomsDeclarationsResponse'
+      summary: List all customs declarations
+      tags:
+        - Customs Declarations
+    post:
+      description: Creates a new customs declaration object
+      operationId: CreateCustomsDeclaration
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomsDeclaration'
+        description: CustomsDeclaration details.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleCustomsDeclarationResponse'
+      summary: Create a new customs declaration
+      tags:
+        - Customs Declarations
+  '/customs/declarations/{CustomsDeclarationId}':
+    get:
+      description: Retrieve an existing customs declaration by object id
+      operationId: GetCustomsDeclaration
+      parameters:
+        - description: Object ID of the customs declaration
+          in: path
+          name: CustomsDeclarationId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/singleCustomsDeclarationResponse'
+      summary: Retrieve a customs declaration
+      tags:
+        - Customs Declarations
+  /customs/items:
+    get:
+      description: List all customs items objects
+      operationId: GetAllCustomsItems
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedCustomsItemsResponse'
+      summary: List all customs items
+      tags:
+        - Customs Items
+    post:
+      description: Creates a new customs item object
+      operationId: CreateCustomsItem
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+        description: CustomsItem details.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleCustomsItemResponse'
+      summary: Create a new customs item
+      tags:
+        - Customs Items
+  '/customs/items/{CustomsItemId}':
+    get:
+      description: Retrieve an existing customs item by object id
+      operationId: GetCustomsItem
+      parameters:
+        - description: Object ID of the customs item
+          in: path
+          name: CustomsItemId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/singleCustomsItemResponse'
+      summary: Retrieve a customs item
+      tags:
+        - Customs Items
+  /manifests:
+    get:
+      description: List all manifest objects.
+      operationId: ListManifest
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedManifestResponse'
+      summary: List all manifests
+      tags:
+        - Manifests
+    post:
+      description: Creates a new manifest object.
+      operationId: CreateManifest
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestRequest'
+        description: Manifest details and contact info.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleManifestResponse'
+      summary: Create a new manifest
+      tags:
+        - Manifests
+  '/manifests/{ManifestId}':
+    get:
+      description: Retrieve an existing manifest by object id.
+      operationId: GetManifest
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: Object ID of the manifest to update
+          in: path
+          name: ManifestId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleManifestResponse'
+      summary: Retrieve a manifest
+      tags:
+        - Manifests
+  /orders:
+    get:
+      description: List all order objects.
+      operationId: GetAllOrder
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedOrderResponse'
+      summary: List all orders
+      tags:
+        - Orders
+    post:
+      description: Creates a new order object.
+      operationId: CreateOrder
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+        description: Order details.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleOrderResponse'
+      summary: Create a new order
+      tags:
+        - Orders
+  '/orders/{OrderId}':
+    get:
+      description: Retrieve an existing order by object id.
+      operationId: GetOrder
+      parameters:
+        - description: Object ID of the order
+          in: path
+          name: OrderId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleOrderResponse'
+      summary: Retrieve an order
+      tags:
+        - Orders
+  /parcels:
+    get:
+      description: List all parcel objects for the merchant
+      operationId: GetAllParcel
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedParcelResponse'
+      summary: List all parcels
+      tags:
+        - Parcels
+    post:
+      description: Creates a new parcel object for the merchant
+      operationId: CreateParcel
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelRequest'
+        description: Parcel details.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleParcelResponse'
+      summary: Create a new parcel
+      tags:
+        - Parcels
+  '/parcels/{ParcelId}':
+    get:
+      description: Retrieve an existing parcel by object id for the merchant
+      operationId: GetParcel
+      parameters:
+        - description: Object ID of the parcel
+          in: path
+          name: ParcelId
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleParcelResponse'
+      summary: Retrieve a parcel
+      tags:
+        - Parcels
+  /pickups:
+    post:
+      description: Creates a pickup object.
+      operationId: CreatePickup
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasePickup'
+        description: Shippo’s pickups endpoint allows you to schedule pickups with USPS and DHL Express for eligible shipments that you have already created.
+      responses:
+        '201':
+          $ref: '#/components/responses/singlePickupResponse'
+      summary: Create a pickup
+      tags:
+        - Pickups
+  '/rates/{RateId}':
+    get:
+      description: Retrieve an existing rate by object id for the merchant
+      operationId: GetRate
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: Object ID of the rate
+          in: path
+          name: RateId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleRateResponse'
+      summary: Retrieve a rate
+      tags:
+        - Rates
+  /refunds:
+    post:
+      description: Creates a new refund object.
+      operationId: CreateRefund
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequestBody'
+        description: Refund details
+      responses:
+        '201':
+          $ref: '#/components/responses/singleRefundResponse'
+      summary: Create a refund
+      tags:
+        - Refunds
+  '/refunds/{RefundId}':
+    get:
+      description: Retrieve an existing refund by object id.
+      operationId: GetRefund
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: Object ID of the refund to update
+          in: path
+          name: RefundId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleRefundResponse'
+      summary: Retrieve a refund
+      tags:
+        - Refunds
+  /shipments:
+    get:
+      description: List all shipment objects for the merchant
+      operationId: GetAllShipment
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedShipmentResponse'
+      summary: List all shipments
+      tags:
+        - Shipments
+    post:
+      description: Creates a new shipment object for the merchant
+      operationId: CreateShipment
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentInsertRequestBody'
+        description: Shipment details and contact info.
+      responses:
+        '201':
+          $ref: '#/components/responses/singleShipmentResponse'
+      summary: Create a new shipment
+      tags:
+        - Shipments
+  '/shipments/{ShipmentId}':
+    get:
+      description: Retrieve an existing shipment by object id
+      operationId: GetShipment
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: Object ID of the shipment to update
+          in: path
+          name: ShipmentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleShipmentResponse'
+      summary: Retrieve a shipment
+      tags:
+        - Shipments
+  '/shipments/{ShipmentId}/rates':
+    get:
+      description: Gets a paginated list of rates associated with a shipment
+      operationId: GetAllShipmentRates
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+        - description: Object ID of the shipment to update
+          in: path
+          name: ShipmentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedRateResponse'
+      summary: Retrieve shipment rates
+      tags:
+        - Rates
+  '/shipments/{ShipmentId}/rates/{CurrencyCode}':
+    get:
+      description: |-
+        Each valid shipment object will automatically trigger the calculation of all available rates. Depending on your shipment data, there may be none, one or multiple rates.
+
+        By default, the calculated Rates will return the price in two currencies under the amount and amount_local keys, respectively. The amount key will contain the price of a rate expressed in the currency that is used in the country from which parcel originates, and the amount_local key will contain the price expressed in the currency that is used in the country the parcel is shipped to. You can request rates with prices expressed in a different currency by adding the desired currency code in the end of the resource URL. The full list of supported currencies along with their codes can be viewed on [open exchange rates](http://openexchangerates.org/api/currencies.json).
+
+        Note: re-requesting the rates with a different currency code will re-queue the shipment (i.e. set the Shipment's status to QUEUED) and the converted currency rates will only be available when the Shipment's status is set to SUCCESS.
+      operationId: GetAllShipmentRatesCC
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+        - description: ISO currency code for the rates
+          in: path
+          name: CurrencyCode
+          required: true
+          schema:
+            type: string
+            default: USD
+        - description: Object ID of the shipment to update
+          in: path
+          name: ShipmentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/paginatedRateResponse'
+      summary: Retrieve shipment rates in currency
+      tags:
+        - Rates
+  /tracks:
+    post:
+      description: You can register your webhook(s) for a Shipment (and request the current status at the same time) by POSTing to the tracking endpoint. This way Shippo will send HTTP notifications to your track_updated webhook(s) whenever the status changes.
+      operationId: CreateTrackPost
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TracksRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/idOfCreateTrackPostEndpoint'
+      summary: Register a tracking webhook
+      tags:
+        - Tracking Status
+  '/tracks/{Carrier}/{TrackingNumber}':
+    get:
+      description: Request the tracking status of a shipment by sending a GET request.
+      operationId: GetTrack
+      parameters:
+        - description: Tracking numer
+          in: path
+          name: TrackingNumber
+          required: true
+          schema:
+            type: string
+        - description: Name of the carrier
+          in: path
+          name: Carrier
+          required: true
+          schema:
+            type: string
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/idOfGetTrackEndpoint'
+      summary: Get a tracking status
+      tags:
+        - Tracking Status
+  /transactions:
+    get:
+      description: List all transaction objects
+      operationId: ListTransaction
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: The page number you want to select
+          in: query
+          name: page
+          schema:
+            type: integer
+            format: int64
+            default: 1
+        - description: The number of results to return per page (max 100)
+          in: query
+          name: results
+          schema:
+            type: integer
+            format: int64
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          $ref: '#/components/responses/listTransactionResponse'
+      summary: List all shipping labels
+      tags:
+        - Transactions
+    post:
+      description: Creates a new transaction object and purchases the shipping label for the provided rate.
+      operationId: CreateTransaction
+      parameters:
+        - description: SHIPPO-API-VERSION
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequestBody'
+        description: Examples.
+        x-examples:
+          application/json:
+            instant-transaction-example:
+              summary: Create an instant transaction
+              value:
+                carrier_account: b741b99f95e841639b54272834bc478c
+                label_file_type: PDF
+                metadata: Order ID
+                servicelevel_token: usps_priority
+                shipment:
+                  address_from:
+                    city: San Francisco
+                    company: Shippo
+                    country: US
+                    email: shippotle@goshippo.com
+                    is_residential: true
+                    metadata: Customer ID 123456
+                    name: Shwan Ippotle
+                    phone: +1 555 341 9393
+                    state: CA
+                    street1: 215 Clayton St.
+                    street2: 215 Clayton St.
+                    validate: true
+                    zip: 94117
+                  address_return:
+                    city: San Francisco
+                    company: Shippo
+                    country: US
+                    email: shippotle@goshippo.com
+                    is_residential: true
+                    metadata: Customer ID 123456
+                    name: Shwan Ippotle
+                    phone: +1 555 341 9393
+                    state: CA
+                    street1: 215 Clayton St.
+                    street2: 215 Clayton St.
+                    validate: true
+                    zip: 94117
+                  address_to:
+                    city: San Francisco
+                    company: Shippo
+                    country: US
+                    email: shippotle@goshippo.com
+                    is_residential: true
+                    metadata: Customer ID 123456
+                    name: Shwan Ippotle
+                    phone: +1 555 341 9393
+                    state: CA
+                    street1: 215 Clayton St.
+                    street2: 215 Clayton St.
+                    validate: true
+                    zip: 94117
+                  parcels:
+                    - distance_unit: in
+                      height: 1
+                      length: 1
+                      mass_unit: lb
+                      template: USPS_LargeFlatRateBox
+                      weight: 1
+                      width: 1
+            rate-transaction-example:
+              summary: Create a rate transaction
+              value:
+                async: false
+                label_file_type: PDF
+                metadata: Order ID
+                rate: ec9f0d3adc9441449c85d315f0997fd5
+      responses:
+        '201':
+          $ref: '#/components/responses/singleTransactionResponse'
+      summary: Create a shipping label (rate)
+      tags:
+        - Transactions
+      x-codeSamples:
+        - label: CLI
+          lang: cURL
+          source: |-
+            curl --location --request POST '/transactions' \
+            --header 'Authorization: ShippoToken {{token}}' \
+            --header 'Content-Type: application/json' \
+            --header 'SHIPPO-API-VERSION: 2018-02-08' \
+            --data-raw '{
+              "rate": "a5c9d1bec93149f5bedc3a9374b50970",
+              "async": false,
+              "label_file_type": "PDF"
+            }'
+  '/transactions/{TransactionId}':
+    get:
+      description: Retrieve an existing transaction by object id
+      operationId: GetTransaction
+      parameters:
+        - description: String used to pick a non-default api version to use
+          in: header
+          name: SHIPPO-API-VERSION
+          schema:
+            type: string
+        - description: Object ID of the transaction to update
+          in: path
+          name: TransactionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/singleTransactionResponse'
+      summary: Retrieve a shipping label
+      tags:
+        - Transactions
+security:
+  - APIKeyHeader: []
+tags:
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Address"/>
+    name: Addresses
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Parcel"/>
+    name: Parcels
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Shipment"/>
+    name: Shipments
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Rate"/>
+    name: Rates
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Transaction"/>
+    name: Transactions
+  - description: <SchemaDefinition schemaRef="#/components/schemas/CustomsItem"/>
+    name: Customs Items
+  - description: <SchemaDefinition schemaRef="#/components/schemas/CustomsDeclaration"/>
+    name: Customs Declarations
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Refund"/>
+    name: Refunds
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Manifest"/>
+    name: Manifests
+  - description: <SchemaDefinition schemaRef="#/components/schemas/PlatformCarrierOwnAccountCreationResponse"/>
+    name: Carrier Own Accounts
+  - description: <SchemaDefinition schemaRef="#/components/schemas/CarrierRegisterStatusResponse"/>
+    name: Carrier Master Accounts
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Track"/>
+    name: Tracking Status
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Batch"/>
+    name: Batches
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Order"/>
+    name: Orders
+  - description: <SchemaDefinition schemaRef="#/components/schemas/Pickup"/>
+    name: Pickups
+servers:
+  - url: 'https://platform-api.goshippo.com'
+components:
+  responses:
+    carrierRegisterStatusGetResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CarrierRegisterStatusResponse'
+    idOfCreateTrackPostEndpoint:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Track'
+    idOfGetTrackEndpoint:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Track'
+    listTransactionResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedTransactionResponse'
+    paginatedAddressResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedAddressResponse'
+    paginatedCustomsDeclarationsResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedCustomsDeclarationsResponse'
+    paginatedCustomsItemsResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedCustomsItemsResponse'
+    paginatedManifestResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedManifestResponse'
+    paginatedOrderResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedOrderResponse'
+    paginatedParcelResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedParcelResponse'
+    paginatedRateResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedRateResponse'
+    paginatedShipmentResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedShipmentResponse'
+    platformCarrierOwnAccountCreation400Response:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlatformCarrierOwnAccountCreation400Response'
+    platformCarrierOwnAccountCreationResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlatformCarrierOwnAccountCreationResponse'
+    platformCarrierOwnAccountListResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlatformCarrierOwnAccountListResponse'
+    platformCarrierRegistration400Response:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlatformCarrierRegistration400Response'
+    platformCarrierRegistrationResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlatformCarrierRegisterResponse'
+    singleAddressResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Address'
+    singleBatchResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Batch'
+    singleCustomsDeclarationResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomsDeclaration'
+    singleCustomsItemResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomsItem'
+    singleManifestResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Manifest'
+    singleOrderResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
+    singleParcelResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Parcel'
+    singlePickupResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pickup'
+    singleRateResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Rate'
+    singleRefundResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Refund'
+    singleShipmentResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Shipment'
+    singleTransactionResponse:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+  requestBodies: {}
+  securitySchemes:
+    APIKeyHeader:
+      in: header
+      name: Authorization
+      type: apiKey
+  schemas:
+    Address:
+      description: Address represents the address as retrieved from the database
+      properties:
+        city:
+          description: |-
+            **required for purchase**<br>Name of a city. When creating a Quote Address,
+                        sending a city is optional but will yield more accurate Rates. Please bear in mind that city names may be
+                        ambiguous (there are 34 Springfields in the US). Pass in a state or a ZIP code (see below), if known, it
+                        will yield more accurate results.
+          example: San Francisco
+          type: string
+        company:
+          example: Shippo
+          type: string
+          description: Company Name
+        country:
+          example: US
+          type: string
+          description: |-
+            Example: 'US' or 'DE'. All accepted values can
+                        be found on the <a href="http://www.iso.org/" target="blank">Official ISO Website</a>.
+                        Sending a country is always required.
+        email:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            E-mail address of the contact person,
+                        RFC3696/5321-compliant.
+        is_complete:
+          example: true
+          type: boolean
+          description: |-
+            Complete addresses contain all required values.<br><br>Incomplete addresses have
+                        failed one or multiple validations.<br>Incomplete Addresses are eligible
+                        for requesting rates but lack at least one required value for purchasing labels.<br>
+        is_residential:
+          example: true
+          type: boolean
+          description: |-
+            Indicates whether the address provided is a
+                        residential address or not.
+        metadata:
+          example: Customer ID 123456
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        name:
+          description: '**required for purchase**<br>First and Last Name of the addressee'
+          example: Shwan Ippotle
+          type: string
+        object_created:
+          example: '2014-07-09T02:19:13.174Z'
+          format: date-time
+          type: string
+          description: Date and time of Address creation.
+        object_id:
+          example: d799c2679e644279b59fe661ac8fa488
+          type: string
+          description: |-
+            Unique identifier of the given Address object.
+                        This ID is required to create a Shipment object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the Address
+                        object.
+        object_updated:
+          example: '2014-07-09T02:19:13.174Z'
+          format: date-time
+          type: string
+          description: |-
+            Date and time of last Address update. Since you
+                        cannot update Addresses after they were created, this time stamp reflects the time when the Address was
+                        changed by Shippo's systems for the last time, e.g., during the approximation of one or more values.
+        phone:
+          example: +1 555 341 9393
+          type: string
+          description: |-
+            Addresses containing a phone number allow
+                        carriers to call the recipient when delivering the Parcel. This increases the probability of delivery and
+                        helps to avoid accessorial charges after a Parcel has been shipped.
+        state:
+          description: |-
+            **required for purchase for some countries**<br>State/Province values are required for
+                        shipments from/to the US, AU, and CA. UPS requires province for some countries (i.e Ireland). To receive
+                        more accurate quotes, passing this field is recommended. Most carriers only accept two or three character
+                        state abbreviations.
+          example: CA
+          type: string
+        street1:
+          description: |-
+            **required for purchase**<br>First street line, 35 character limit. Usually
+                        street number and street name (except for DHL Germany, see street_no). 
+          example: 215 Clayton St.
+          type: string
+        street2:
+          type: string
+          description: 'Second street line, 35 character limit.'
+        validation_results:
+          $ref: '#/components/schemas/AddressValidationResults'
+          description: |-
+            object that contains information regarding if
+                        an address had been validated or not. Also contains any messages generated during validation. Children keys
+                        are <code>is_valid</code>(boolean)
+                        and <code>messages</code>(array).
+        zip:
+          description: |-
+            **required for purchase**<br>Postal code of an Address. When creating a
+                        Quote Addresses, sending a ZIP is optional but will yield more accurate Rates.
+          example: 94117
+          type: string
+      required:
+        - country
+      type: object
+    AddressRequestBody:
+      properties:
+        city:
+          description: required for purchase
+          example: San Francisco
+          type: string
+        company:
+          example: Shippo
+          type: string
+        country:
+          example: US
+          type: string
+        email:
+          example: shippotle@goshippo.com
+          type: string
+          description: email
+        is_residential:
+          example: true
+          type: boolean
+        metadata:
+          example: Customer ID 123456
+          type: string
+        name:
+          description: required for purchase
+          example: Shwan Ippotle
+          type: string
+        phone:
+          example: +1 555 341 9393
+          type: string
+        state:
+          description: required for purchase for some countries
+          example: CA
+          type: string
+        street1:
+          description: required for purchase
+          example: 215 Clayton St.
+          type: string
+        street2:
+          type: string
+        validate:
+          example: true
+          type: boolean
+        zip:
+          description: required for purchase
+          example: 94117
+          type: string
+      required:
+        - country
+      type: object
+    AddressValidationResults:
+      properties:
+        is_valid:
+          example: false
+          type: boolean
+        messages:
+          items:
+            $ref: '#/components/schemas/AddressValidationResultsMessage'
+          type: array
+      type: object
+    AddressValidationResultsMessage:
+      properties:
+        code:
+          enum:
+            - verification_error
+            - unknown_street
+            - component_mismatch_error
+            - multiple_match
+            - sub_premise_number_invalid
+            - sub_premise_number_missing
+            - premise_number_invalid
+            - premise_number_missing
+            - box_number_invalid
+            - box_number_missing
+            - pmb_number_missing
+            - postal_code_change
+            - administrative_area_change
+            - locality_change
+            - dependent_locality_change
+            - street_name_change
+            - street_type_change
+            - street_directional_change
+            - sub_premise_type_change
+            - sub_premise_number_change
+            - double_dependent_locality_change
+            - subadministrative_area_change
+            - subnational_area_change
+            - po_box_change
+            - premise_type_change
+            - house_number_change
+            - organization_change
+            - extraneous_information
+            - usps_door_inaccessible
+            - administrative_area_partial
+            - city_partial
+            - street_partial
+            - building_partial
+            - subpremise_partial
+            - administrative_area_full
+            - city_full
+            - thoroughfare_full
+            - premises_full
+            - subpremise_full
+            - geocoded_street
+            - geocoded_neighborhood
+            - geocoded_community
+            - geocoded_state
+            - geocoded_rooftop
+            - geocoded_interpolated_rooftop
+            - invalid_postal_code
+            - postal_code_not_found
+            - empty_request
+            - service_error
+            - street_detail_missing
+            - Invalid City/State/Zip
+            - Default Match
+            - Unknown Street
+            - Address Not Found
+            - Non-Deliverable ZIP4
+            - Multiple Responses
+            - Invalid Dual Address
+            - Invalid State
+            - Invalid City
+            - Ambiguous Address
+          example: Unknown Street
+          type: string
+        source:
+          enum:
+            - Shippo Address Validator
+            - UPS
+          example: Shippo Address Validator
+          type: string
+        text:
+          example: 'City, State and ZIP Code are valid, but street address is not a match.'
+          type: string
+        type:
+          example: address_warning
+          type: string
+      type: object
+    BaseAddressStruct:
+      properties:
+        city:
+          example: Flushing
+          type: string
+        country:
+          example: US
+          type: string
+        email:
+          example: pp@gmail.com
+          type: string
+        name:
+          example: Peter Parker
+          type: string
+        phone:
+          example: 909-929-9999
+          type: string
+        state:
+          example: NY
+          type: string
+        street1:
+          example: 20 Ingram St
+          type: string
+        zip:
+          example: 11375
+          type: string
+      required:
+        - name
+        - street1
+        - city
+        - state
+        - zip
+        - country
+      type: object
+    BaseBatchShipment:
+      properties:
+        carrier_account:
+          description: Object ID of the carrier account to be used for this shipment (will override batch default)
+          example: a4391cd4ab974f478f55dc08b5c8e3b3
+          type: string
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          example: 'SHIPMENT #1'
+          maxLength: 100
+          type: string
+        servicelevel_token:
+          description: 'A token that sets the shipping method for the batch, overriding the batch default.'
+          example: fedex_ground
+          type: string
+        shipment:
+          description: '(string or object) Object ID of a previously created shipment, to be added to the batch. OR required fields of a new Shipment Object, to be created.'
+          example: 4fbbcc0591d24e1abcdc5c0d35622f78
+          type: string
+      required:
+        - shipment
+      type: object
+    BasePickup:
+      properties:
+        carrier_account:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        is_test:
+          type: boolean
+        location:
+          $ref: '#/components/schemas/Location'
+        metadata:
+          type: string
+        requested_end_time:
+          format: date-time
+          type: string
+        requested_start_time:
+          format: date-time
+          type: string
+        transactions:
+          example: '[adcfdddf8ec64b84ad22772bce3ea37a]'
+          items:
+            type: string
+          type: array
+      required:
+        - carrier_account
+        - location
+        - transactions
+        - requested_start_time
+        - requested_end_time
+      type: object
+    Batch:
+      properties:
+        batch_shipments:
+          description: |-
+            Array of <a href="#batches-batchshipments">BatchShipment</a> objects. The response keeps the same order as in the request
+                        array.
+          properties:
+            next:
+              example: 'https://platform-api.goshippo.com/batches/5ef63c54f5bf45d3b1f8fb37dcb1c5f4/?object_results=creation_failed&page=3'
+              type: string
+            previous:
+              example: 'https://platform-api.goshippo.com/batches/5ef63c54f5bf45d3b1f8fb37dcb1c5f4/?object_results=creation_failed&page=1'
+              type: string
+            results:
+              items:
+                $ref: '#/components/schemas/BatchShipment'
+              type: array
+          required:
+            - next
+            - previous
+            - results
+          type: object
+        default_carrier_account:
+          description: ID of the Carrier Account object to use as the default for all shipments in this Batch. The carrier account can be changed on a per-shipment basis by changing the carrier_account in the corresponding BatchShipment object.
+          example: 078870331023437cb917f5187429b093
+          type: string
+        default_servicelevel_token:
+          description: |-
+            Token of the service level to use as the
+                        default for all shipments in this Batch. The servicelevel can be changed on a per-shipment basis by changing
+                        the servicelevel_token in the corresponding BatchShipment object. <a href="#servicelevels">Servicelevel
+                        tokens can be found here.</a>
+          example: usps_priority
+          type: string
+        label_filetype:
+          description: |-
+            Print format of the label. If empty, will use
+                        the default format set from <a href="https://api.goshippo.com/user/settings">the
+                        Shippo dashboard.</a>
+          enum:
+            - PNG
+            - PNG_2.3x7.5
+            - PDF
+            - PDF_2.3x7.5
+            - PDF_4x6
+            - PDF_4x8
+            - PDF_A4
+            - PDF_A6
+            - ZPLII
+          example: PDF_4x6
+          type: string
+        label_url:
+          description: An array of URLs each pointing to a merged file of 100 labels each
+          items:
+            type: string
+          type: array
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          example: 'BATCH #1'
+          maxLength: 100
+          type: string
+        object_created:
+          description: Date and time of Batch creation
+          example: '2016-01-04T00:15:44.394Z'
+          type: string
+        object_id:
+          description: Unique identifier of the given Batch object
+          example: 5ef63c54f5bf45d3b1f8fb37dcb1c5f4
+          type: string
+        object_owner:
+          description: Username of the user who created the Address object.
+          example: shippo@goshippo.com
+          type: string
+        object_results:
+          description: 'An object containing the following counts:<br>creation_succeeded<br>creation_failed<br>purchase_succeeded<br>purchase_failed'
+          properties:
+            creation_failed:
+              example: 3
+              format: int64
+              type: integer
+            creation_succeeded:
+              example: 5
+              format: int64
+              type: integer
+            purchase_failed:
+              example: 0
+              format: int64
+              type: integer
+            purchase_succeeded:
+              example: 0
+              format: int64
+              type: integer
+          required:
+            - purchase_failed
+            - purchase_succeeded
+            - creation_failed
+            - creation_succeeded
+          type: object
+        object_updated:
+          description: Date and time of last update to the Batch
+          example: '2016-01-04T00:48:13.841Z'
+          type: string
+        status:
+          description: |-
+            Batches that are VALIDATING are being created
+                        and validated<br><br>VALID batches
+                        can be purchased<br><br>INVALID
+                        batches cannot be purchased, INVALID BatchShipments must be removed<br><br>Batches that are in the
+                        PURCHASING state are being purchased<br><br>PURCHASED
+                        batches are finished purchasing.
+          enum:
+            - VALIDATING
+            - VALID
+            - INVALID
+            - PURCHASING
+            - PURCHASED
+          example: VALID
+          type: string
+        test:
+          example: false
+          type: boolean
+      required:
+        - default_carrier_account
+        - default_servicelevel_token
+        - object_id
+        - object_owner
+        - status
+        - object_created
+        - object_updated
+        - batch_shipments
+        - object_results
+        - label_url
+      type: object
+    BatchShipment:
+      properties:
+        carrier_account:
+          description: Object ID of the carrier account to be used for this shipment (will override batch default)
+          example: a4391cd4ab974f478f55dc08b5c8e3b3
+          type: string
+        messages:
+          description: List of Shipment and Transaction error messages.
+          items:
+            $ref: '#/components/schemas/ErrorMessage'
+          type: array
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          example: 'SHIPMENT #1'
+          maxLength: 100
+          type: string
+        object_id:
+          description: Object ID of this batch shipment. Can be used in the remove_shipments endpoint.
+          example: e11c95a6788d4ddcaa22f03175838740
+          type: string
+        servicelevel_token:
+          description: |-
+            A token that sets the shipping method for the
+                        batch, overriding the batch default. Servicelevel tokens can be found <a href="#servicelevels">in
+                        this list</a> or <a href="#carrier-accounts-list">at
+                        this endpoint</a>.
+          example: fedex_ground
+          type: string
+        shipment:
+          description: |-
+            **(string or object) Object ID of a previously created shipment, to be added to the batch. OR required fields of a new Shipment Object, to be created.**<br> Object ID of a previously created shipment, to
+                        be added to the batch<br><br>OR
+                        required fields of a new Shipment Object, to be created. 
+          example: 4fbbcc0591d24e1abcdc5c0d35622f78
+          type: string
+        status:
+          description: |-
+            INVALID batch shipments cannot be purchased and
+                        will have to be removed, fixed, and added to the batch again.<br><br> VALID batch shipments can be purchased. <br><br>batch shipments with the status TRANSACTION_FAILED were not able to be
+                        purchased and the error will be displayed on the message field<br><br> INCOMPLETE batch shipments have an issue with the Address and will need to be removed,
+                        fixed, and added to the batch again.
+          enum:
+            - INVALID
+            - VALID
+            - INCOMPLETE
+            - TRANSACTION_FAILED
+          example: INVALID
+          type: string
+        transaction:
+          description: Object ID of the transaction object created for this batch shipment.
+          example: 4c33736a67e2450da88b38c42deef6b7
+          type: string
+      required:
+        - shipment
+        - object_id
+        - status
+      type: object
+    BatchToCreate:
+      properties:
+        batch_shipments:
+          description: Array of BatchShipment objects. The response keeps the same order as in the request array.
+          items:
+            $ref: '#/components/schemas/BaseBatchShipment'
+          type: array
+        default_carrier_account:
+          description: ID of the Carrier Account object to use as the default for all shipments in this Batch. The carrier account can be changed on a per-shipment basis by changing the carrier_account in the corresponding BatchShipment object.
+          example: 078870331023437cb917f5187429b093
+          type: string
+        default_servicelevel_token:
+          description: Token of the service level to use as the default for all shipments in this Batch. The servicelevel can be changed on a per-shipment basis by changing the servicelevel_token in the corresponding BatchShipment object.
+          example: usps_priority
+          type: string
+        label_filetype:
+          description: 'Print format of the label. If empty, will use the default format.'
+          enum:
+            - PNG
+            - PNG_2.3x7.5
+            - PDF
+            - PDF_2.3x7.5
+            - PDF_4x6
+            - PDF_4x8
+            - PDF_A4
+            - PDF_A6
+            - ZPLII
+          example: PDF_4x6
+          type: string
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          example: 'BATCH #1'
+          maxLength: 100
+          type: string
+      required:
+        - default_carrier_account
+        - default_servicelevel_token
+        - batch_shipments
+      type: object
+    COD:
+      properties:
+        amount:
+          description: Amount to be collected.
+          example: 5.5
+          type: string
+        currency:
+          description: Currency for the amount to be collected. Currently only USD is supported for FedEx and UPS.
+          example: USD
+          type: string
+        payment_method:
+          description: 'Secured funds include money orders, certified cheques and others (see UPS and FedEx for details). If no payment_method inputted the value defaults to "ANY".)'
+          enum:
+            - SECURED_FUNDS
+            - CASH
+            - ANY
+          example: CASH
+          type: string
+      title: 'COD Specify collection on delivery details (UPS, and FedEx only).'
+      type: object
+    CanadaPostCreateMasterAccountParameters:
+      properties:
+        canada_post_terms:
+          description: 'Whether or not the user agrees to Canada Post''s terms. If passed in as false, request will fail with error 400'
+          type: boolean
+        company:
+          example: Shippo
+          type: string
+        email:
+          example: hippo@goshippo.com
+          type: string
+        full_name:
+          example: Shippo Meister
+          type: string
+        phone:
+          description: Needs to be a valid phone number and cannot be null
+          example: 1112223333
+          type: string
+      required:
+        - company
+        - phone
+        - full_name
+        - email
+        - canada_post_terms
+      type: object
+    CarrierRegisterStatusResponse:
+      properties:
+        carrier_account:
+          example: 99dc410d295b4a168993cc38809cb123
+          type: string
+        object_created:
+          format: date-time
+          type: string
+        object_owner:
+          example: tom@gmail.com
+          type: string
+        object_updated:
+          format: date-time
+          type: string
+        status:
+          example: PENDING_TERMS
+          type: string
+      type: object
+    ConnectExistingOwnFedexAccountRequest:
+      properties:
+        account_id:
+          example: 321123
+          type: string
+        active:
+          type: boolean
+        carrier:
+          example: fedex
+          type: string
+        metadata:
+          example: FEDEX Account
+          type: string
+        parameters:
+          $ref: '#/components/schemas/FedexConnectExistingOwnAccountParameters'
+        test:
+          example: false
+          type: boolean
+      required:
+        - carrier
+        - account_id
+        - parameters
+      type: object
+    ConnectExistingOwnUPSAccountRequest:
+      properties:
+        account_id:
+          description: 'This field is required as input to the API, but is not used for UPS. Use the empty string.'
+          type: string
+        active:
+          type: boolean
+        carrier:
+          example: ups
+          type: string
+        metadata:
+          example: UPS Account
+          type: string
+        parameters:
+          $ref: '#/components/schemas/UPSConnectExistingOwnAccountParameters'
+        test:
+          example: false
+          type: boolean
+      required:
+        - account_id
+        - active
+        - parameters
+      type: object
+    CreateCanadaPostMasterAccountRequest:
+      properties:
+        carrier:
+          example: canada_post
+          type: string
+        parameters:
+          $ref: '#/components/schemas/CanadaPostCreateMasterAccountParameters'
+      required:
+        - carrier
+        - parameters
+      type: object
+    CreateCustomsDeclaration:
+      properties:
+        aes_itn:
+          description: required if eel_pfc is 'AES_ITN'
+          type: string
+        b13a_filing_option:
+          type: string
+        b13a_number:
+          description: must be provided if and only if b13a_filing_option is provided
+          type: string
+        certificate:
+          type: string
+        certify:
+          example: true
+          type: boolean
+        certify_signer:
+          example: Shawn Ippotle
+          type: string
+        commercial_invoice:
+          type: string
+        contents_explanation:
+          description: required if contents_type is 'OTHER'
+          example: T-Shirt purchase
+          type: string
+        contents_type:
+          example: MERCHANDISE
+          type: string
+        disclaimer:
+          type: string
+        eel_pfc:
+          example: NOEEI_30_37_a
+          type: string
+        exporter_reference:
+          type: string
+        importer_reference:
+          type: string
+        incoterm:
+          type: string
+        invoice:
+          example: '#123123'
+          type: string
+        items:
+          items:
+            $ref: '#/components/schemas/Item'
+          type: array
+        license:
+          type: string
+        metadata:
+          example: 'Order ID #123123'
+          type: string
+        non_delivery_option:
+          type: string
+        notes:
+          type: string
+        test:
+          example: true
+          type: boolean
+      required:
+        - certify_signer
+        - certify
+        - non_delivery_option
+        - contents_type
+        - items
+      type: object
+    CreateHermesUKMasterAccountRequest:
+      properties:
+        carrier:
+          example: hermes_uk
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CreateNewOwnUPSAccountRequest:
+      properties:
+        account_id:
+          description: 'This field is required as input to the API, but is not used for UPS. Use the empty string.'
+          type: string
+        active:
+          type: boolean
+        carrier:
+          example: ups
+          type: string
+        metadata:
+          example: UPS Account
+          type: string
+        parameters:
+          $ref: '#/components/schemas/UPSCreateNewOwnAccountParameters'
+        test:
+          example: false
+          type: boolean
+      required:
+        - account_id
+        - parameters
+        - active
+      type: object
+    CreateUPSMasterAccountRequest:
+      properties:
+        carrier:
+          example: ups
+          type: string
+        parameters:
+          $ref: '#/components/schemas/UPSCreateMasterAccountParameters'
+      required:
+        - carrier
+      type: object
+    CreateUSPSMasterAccountRequest:
+      properties:
+        carrier:
+          example: usps
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CustomsDeclaration:
+      properties:
+        aes_itn:
+          description: '**required if eel_pfc is ''AES_ITN''**<br>AES / ITN reference of the shipment.'
+          type: string
+        b13a_filing_option:
+          type: string
+          description: |2-
+
+             B13A Option details are obtained by filing a B13A Canada Export Declaration via the
+                        Canadian Export Reporting System (CERS). <a href="https://www.cbsa-asfc.gc.ca/export/reporting-declaration-eng.html" target="_blank" rel="noopener noreferrer"> More information on reporting commercial exports from Canada. </a> 
+        b13a_number:
+          description: '**must be provided if and only if b13a_filing_option is provided**<br>Represents:<br> the Proof of Report (POR) Number when b13a_filing_option is FILED_ELECTRONICALLY;<br> the Summary ID Number when b13a_filing_option is SUMMARY_REPORTING;<br> or the Exemption Number when b13a_filing_option is NOT_REQUIRED.<br> '
+          type: string
+        certificate:
+          type: string
+          description: Certificate reference of the shipment.
+        certify:
+          example: true
+          type: boolean
+          description: |-
+            Expresses that the certify_signer has provided
+                        all information of this customs declaration truthfully.
+        certify_signer:
+          example: Shawn Ippotle
+          type: string
+          description: |-
+            Name of the person who created the customs
+                        declaration and is responsible for the validity of all information provided.
+        commercial_invoice:
+          type: string
+        contents_explanation:
+          description: |-
+            **required if contents_type is 'OTHER'**<br>Explanation of the type of goods of the
+                        shipment.
+          example: T-Shirt purchase
+          type: string
+        contents_type:
+          example: MERCHANDISE
+          type: string
+          description: Type of goods of the shipment.
+        disclaimer:
+          type: string
+          description: |-
+            Disclaimer for the shipment and customs
+                        information that have been provided.
+        eel_pfc:
+          example: NOEEI_30_37_a
+          type: string
+          description: |-
+            EEL / PFC type of the shipment. For most
+                        shipments from the US to CA, 'NOEEI_30_36' is applicable; for most other shipments from the US,
+                        'NOEEI_30_37_a' is applicable.
+        exporter_reference:
+          type: string
+          description: Exporter reference of an export shipment.
+        importer_reference:
+          type: string
+          description: Importer reference of an import shipment.
+        incoterm:
+          type: string
+          description: |-
+            The incoterm reference of the shipment. FCA
+                        available for DHL Express and FedEx only.
+        invoice:
+          example: '#123123'
+          type: string
+          description: Invoice reference of the shipment.
+        items:
+          example:
+            - 5087f181d1dc4b14b73fdbf636498886
+          items:
+            type: string
+          type: array
+          description: |-
+            Distinct Parcel content items as Customs Items
+                        object_ids.
+        license:
+          type: string
+          description: License reference of the shipment.
+        metadata:
+          example: 'Order ID #123123'
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        non_delivery_option:
+          type: string
+          description: |-
+            Indicates how the carrier should proceed in
+                        case the shipment can't be delivered.
+        notes:
+          type: string
+          description: |-
+            Additional notes to be included in the customs
+                        declaration.
+        object_created:
+          example: '2014-07-17T01:01:08.306Z'
+          format: date-time
+          type: string
+          description: Date and time of object creation.
+        object_id:
+          example: e2197a54da9d470480f4f8796cc419cb
+          type: string
+          description: Unique identifier of the given object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        object.
+        object_state:
+          enum:
+            - INVALID
+            - VALID
+          example: VALID
+          type: string
+          description: |-
+            Indicates the validity of the Customs
+                        Item.
+        object_updated:
+          example: '2014-07-17T01:01:08.306Z'
+          format: date-time
+          type: string
+          description: Date and time of last object update.
+        test:
+          example: true
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+      required:
+        - certify_signer
+        - certify
+        - non_delivery_option
+        - contents_type
+        - items
+      type: object
+    CustomsItem:
+      properties:
+        description:
+          example: T-Shirt
+          type: string
+          description: Text description of your item.
+        eccn_ear99:
+          type: string
+          description: |-
+            Export Control Classification Number, required
+                        on some exports from the United States.
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: g
+          type: string
+          description: The unit used for net_weight.
+        metadata:
+          example: Order ID '123454'
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        net_weight:
+          example: 5
+          type: string
+          description: |-
+            Total weight of this item, i.e. quantity *
+                        weight per item.
+        object_created:
+          example: '2014-07-17T00:49:20.631Z'
+          format: date-time
+          type: string
+          description: Date and time of object creation.
+        object_id:
+          example: d799c2679e644279b59fe661ac8fa488
+          type: string
+          description: Unique identifier of the given object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        object.
+        object_state:
+          enum:
+            - INVALID
+            - VALID
+          example: VALID
+          type: string
+          description: |-
+            Indicates the validity of the Customs
+                        Item.
+        object_updated:
+          example: '2014-07-17T00:49:20.631Z'
+          format: date-time
+          type: string
+          description: Date and time of last object update.
+        origin_country:
+          type: string
+          description: |-
+            Country of origin of the item. Example: 'US' or
+                        'DE'. All accepted values can be found on the <a href="http://www.iso.org/" target="_blank">Official ISO Website</a>.
+        quantity:
+          example: 20
+          format: int64
+          type: integer
+          description: |-
+            Quantity of this item in the shipment you send.
+                        Must be greater than 0.
+        sku_code:
+          description: |-
+            SKU code of the item, which is required by some
+                        carriers.
+          example: HM-123
+          type: string
+        tariff_number:
+          type: string
+          description: The tariff number of the item.
+        test:
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+        value_amount:
+          example: 200
+          type: string
+          description: |-
+            Total value of this item, i.e. quantity * value
+                        per item.
+        value_currency:
+          example: USD
+          type: string
+          description: 'Currency used for value_amount. The <a href="http://www.xe.com/iso4217.php">official ISO 4217</a> currency codes are used, e.g. "USD" or "EUR".'
+      required:
+        - description
+        - quantity
+        - net_weight
+        - mass_unit
+        - value_amount
+        - value_currency
+        - origin_country
+      type: object
+    ErrorMessage:
+      properties:
+        shipment:
+          example:
+            - address_to:
+                - This field is required.
+          items:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          type: array
+      type: object
+    Extra:
+      properties:
+        insurance:
+          $ref: '#/components/schemas/Insurance'
+      type: object
+    FedexConnectExistingOwnAccountParameters:
+      properties:
+        first_name:
+          example: Hippo
+          type: string
+        from_address_city:
+          example: San Francisco
+          type: string
+        from_address_country_iso2:
+          example: US
+          type: string
+        from_address_st:
+          example: 250 Union St
+          type: string
+        from_address_state:
+          example: CA
+          type: string
+        from_address_zip:
+          example: 94133
+          type: string
+        last_name:
+          example: Hippovich
+          type: string
+        meter:
+          example: 118599345
+          type: string
+        phone_number:
+          example: 1112223333
+          type: string
+        smartpost_id:
+          example: 5902
+          type: string
+      required:
+        - meter
+      type: object
+    InstantTransactionRequestBody:
+      properties:
+        carrier_account:
+          example: b741b99f95e841639b54272834bc478c
+          type: string
+        label_file_type:
+          example: PDF
+          type: string
+        metadata:
+          example: 'Order ID #12345'
+          type: string
+        servicelevel_token:
+          example: usps_priority
+          type: string
+        shipment:
+          $ref: '#/components/schemas/ShipmentInsertRequestBody'
+      required:
+        - shipment
+        - carrier_account
+        - servicelevel_token
+      type: object
+    Insurance:
+      properties:
+        amount:
+          example: 5.5
+          type: string
+        currency:
+          example: USD
+          type: string
+      type: object
+    Item:
+      properties:
+        description:
+          example: T-Shirt
+          type: string
+        eccn_ear99:
+          type: string
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: g
+          type: string
+        metadata:
+          example: Order ID '123454'
+          type: string
+        net_weight:
+          example: 5
+          type: string
+        origin_country:
+          type: string
+        quantity:
+          example: 20
+          format: int64
+          type: integer
+        sku_code:
+          description: The stock keeping unit value of this item.
+          example: HM-123
+          type: string
+        tariff_number:
+          type: string
+        value_amount:
+          example: 200
+          type: string
+        value_currency:
+          example: USD
+          type: string
+      required:
+        - description
+        - quantity
+        - net_weight
+        - mass_unit
+        - value_amount
+        - value_currency
+        - origin_country
+      type: object
+    LineItem:
+      properties:
+        currency:
+          description: Currency of the <code>total_price</code> amount.
+          example: USD
+          type: string
+        manufacture_country:
+          description: 'Country the item was manufactured in. In the Shippo dashboard, this value will be used ot pre-fill the customs declaration when creating a label for this order.'
+          example: US
+          type: string
+        max_delivery_time:
+          description: |-
+            The date and time this item needs to be
+                        delivered by, i.e. by when the carrier delivers it to the buyer. This value is used by some platforms such
+                        as eBay to measure a seller's shipping time and performance. It will be displayed in the Shippo
+                        dashboard.
+          example: '2016-07-23T00:00:00Z'
+          format: date-time
+          type: string
+        max_ship_time:
+          description: |-
+            The date and time this item needs to be
+                        fulfilled by, i.e. by when the shipping label needs to be created and handed over to the carrier. This value
+                        is used by some platforms such as eBay to measure a seller's handling time and performance. It will be
+                        displayed in the Shippo dashboard.
+          example: '2016-07-23T00:00:00Z'
+          format: date-time
+          type: string
+        quantity:
+          description: The quantity of this item in this order.
+          example: 20
+          format: int64
+          type: integer
+        sku:
+          description: The stock keeping unit value of this item.
+          example: HM-123
+          type: string
+        title:
+          description: Title of the line item.
+          example: Hippo Magazines
+          type: string
+        total_price:
+          description: 'Total price paid by the buyer for this item (or these items, if quantity > 1).'
+          example: 12.1
+          type: string
+        variant_title:
+          description: A variant is a specific variation of an item (e.g. "size M" or "color blue"). Variants might be exposed as a separate resource in the future too. Currently the variant title is a free text field describing the variant.
+          example: June Edition
+          type: string
+        weight:
+          description: |-
+            Total weight of this/these item(s). Instead of
+                        specifying the weight of all items, you can also set the <code>total_weight</code> value of the order object.
+          example: 0.4
+          type: string
+        weight_unit:
+          description: The unit used for the <code>weight</code> field.
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+      type: object
+    Location:
+      properties:
+        address:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        building_location_type:
+          enum:
+            - Back Door
+            - Ring Bell
+            - Security Deck
+            - Shipping Dock
+            - Front Door
+            - Knock on Door
+            - In/At Mailbox
+            - Mail Room
+            - Office
+            - Other
+            - Reception
+            - Side Door
+          example: Front Door
+          type: string
+        building_type:
+          enum:
+            - apartment
+            - building
+            - department
+            - floor
+            - room
+            - suite
+          example: apartment
+          type: string
+        instructions:
+          example: Behind screen door
+          type: string
+      required:
+        - building_location_type
+        - address
+      type: object
+    Manifest:
+      properties:
+        address_from:
+          example: d799c2679e644279b59fe661ac8fa488
+          type: string
+          description: |-
+            ID of the Address object that should be used as
+                        pickup address for the scan form. The USPS will validate this address before creating the scan form.
+        carrier_account:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: ID of carrier account
+        documents:
+          example:
+            - 'https://shippo-delivery.s3.amazonaws.com/0fadebf6f60c4aca95fa01bcc59c79ae.pdf?Signature=tlQU3RECwdHUQJQadwqg5bAzGFQ%3D&Expires=1402803835&AWSAccessKeyId=AKIAJTHP3LLFMYAWALIA'
+          items:
+            type: string
+          type: array
+          description: |-
+            An array containing the URLs to all returned
+                        manifest documents.
+        object_created:
+          format: date-time
+          type: string
+          description: Date and time of object creation.
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: Unique identifier of the given object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        object.
+        object_updated:
+          format: date-time
+          type: string
+          description: Date and time of last object update.
+        shipment_date:
+          example: '2014-05-16T23:59:59Z'
+          type: string
+          description: |-
+            All shipments to be submitted on this day will
+                        be closed out. Must be in the format "2014-01-18T00:35:03.463Z" (ISO 8601 date).
+        status:
+          enum:
+            - QUEUED
+            - SUCCESS
+            - ERROR
+          example: SUCCESS
+          type: string
+          description: Indicates the status of the manifest.
+        transactions:
+          example: '[adcfdddf8ec64b84ad22772bce3ea37a]'
+          items:
+            type: string
+          type: array
+          description: |-
+            IDs transactions to use. If you set this to
+                        null or not send this parameter, Shippo will automatically assign all applicable transactions.
+      required:
+        - status
+        - object_created
+        - object_updated
+        - object_id
+        - object_owner
+        - carrier_account
+        - shipment_date
+        - documents
+        - address_from
+      type: object
+    ManifestRequest:
+      properties:
+        address_from:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        async:
+          type: boolean
+        carrier_account:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        shipment_date:
+          example: '2014-05-16T23:59:59Z'
+          type: string
+        transactions:
+          items:
+            type: string
+          type: array
+      required:
+        - carrier_account
+        - shipment_date
+        - address_from
+      type: object
+    Order:
+      properties:
+        address_from:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        address_to:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        currency:
+          description: '**Currency of the total_price and total_tax amounts. Required if total_price is provided**<br>Currency of the <code>total_price</code> and <code>total_tax</code> amounts.'
+          example: USD
+          type: string
+        line_items:
+          description: |-
+            Array of <a href="#orders-line-item">line
+                        item</a> objects representing the items in this order. All objects will
+                        be returned expanded by default.
+          items:
+            $ref: '#/components/schemas/LineItem'
+          type: array
+        notes:
+          description: Custom buyer- or seller-provided notes about the order.
+          example: This customer is a VIP
+          type: string
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: Unique identifier of the order object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        object.
+        order_number:
+          description: An alphanumeric identifier for the order used by the seller/buyer. This identifier doesn't need to be unique.
+          example: '#1068'
+          type: string
+        order_status:
+          description: |-
+            Current state of the order. See the <a href="/docs/orders#order-order-status">orders
+                        tutorial</a> for the logic of how the status is handled.
+          enum:
+            - UNKNOWN
+            - AWAITPAY
+            - PAID
+            - REFUNDED
+            - REFUNDED
+            - PARTIALLY_FULFILLED
+            - SHIPPED
+          example: PAID
+          type: string
+        placed_at:
+          description: Date and time when the order was placed. This datetime can be different from the datetime of the order object creation on Shippo.
+          example: '2016-09-23T01:28:12Z'
+          type: string
+        shipping_cost:
+          description: Amount paid by the buyer for shipping. This amount can be different from the price the seller will actually pay for shipping.
+          example: 12.83
+          type: string
+        shipping_cost_currency:
+          description: '**Currency of the shipping_cost amount. Required if shipping_cost is provided**<br>Currency of the <code>shipping_cost</code> amount.'
+          example: USD
+          type: string
+        shipping_method:
+          description: Shipping method (carrier + service or other free text description) chosen by the buyer. This value can be different from the shipping method the seller will actually choose.
+          example: USPS First Class Package
+          type: string
+        subtotal_price:
+          example: 12.1
+          type: string
+        total_price:
+          description: Total amount paid by the buyer for this order.
+          example: 24.93
+          type: string
+        total_tax:
+          description: Total tax amount paid by the buyer for this order.
+          example: 0
+          type: string
+        transactions:
+          items:
+            type: string
+          type: array
+          description: |-
+            Array of <a href="#transactions">transaction</a> objects representing all shipping labels purchased for this order.
+                        All objects are returned expanded with a limited number of fields by default.
+        weight:
+          example: 0.4
+          type: string
+          description: Total weight of the order.
+        weight_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+          description: The unit used for the <code>weight</code> field.
+      required:
+        - address_to
+        - placed_at
+      type: object
+    OrderRequest:
+      properties:
+        address_from:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        address_to:
+          $ref: '#/components/schemas/BaseAddressStruct'
+        currency:
+          description: '**Currency of the total_price and total_tax amounts. Required if total_price is provided**<br>Currency of the <code>total_price</code> and <code>total_tax</code> amounts.'
+          example: USD
+          type: string
+        line_items:
+          description: |-
+            Array of <a href="#order-line-item">line
+                        item</a> objects representing the items in this order. All objects will
+                        be returned expanded by default.
+          items:
+            $ref: '#/components/schemas/LineItem'
+          type: array
+        notes:
+          description: Custom buyer- or seller-provided notes about the order.
+          example: This customer is a VIP
+          type: string
+        order_number:
+          description: An alphanumeric identifier for the order used by the seller/buyer. This identifier doesn't need to be unique.
+          example: '#1068'
+          type: string
+        order_status:
+          description: |-
+            Current state of the order. See the <a href="/docs/orders#order-order-status">orders
+                        tutorial</a> for the logic of how the status is handled.
+          enum:
+            - UNKNOWN
+            - AWAITPAY
+            - PAID
+            - REFUNDED
+            - REFUNDED
+            - PARTIALLY_FULFILLED
+            - SHIPPED
+          example: PAID
+          type: string
+        placed_at:
+          description: Date and time when the order was placed. This datetime can be different from the datetime of the order object creation on Shippo.
+          example: '2016-09-23T01:28:12Z'
+          format: date-time
+          type: string
+        shipping_cost:
+          description: Amount paid by the buyer for shipping. This amount can be different from the price the seller will actually pay for shipping.
+          example: 12.83
+          type: string
+        shipping_cost_currency:
+          description: '**Currency of the shipping_cost amount. Required if shipping_cost is provided**<br>Currency of the <code>shipping_cost</code> amount.'
+          example: USD
+          type: string
+        shipping_method:
+          description: Shipping method (carrier + service or other free text description) chosen by the buyer. This value can be different from the shipping method the seller will actually choose.
+          example: USPS First Class Package
+          type: string
+        subtotal_price:
+          example: 12.1
+          type: string
+        total_price:
+          description: Total amount paid by the buyer for this order.
+          example: 24.93
+          type: string
+        total_tax:
+          description: Total tax amount paid by the buyer for this order.
+          example: 0
+          type: string
+        weight:
+          example: 0.4
+          type: string
+          description: Total weight of the order.
+        weight_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+          description: The unit used for the <code>weight</code> field.
+      required:
+        - address_to
+        - placed_at
+      type: object
+    PaginatedAddressResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Address'
+          type: array
+      title: Paginated Address Response.
+      type: object
+    PaginatedCustomsDeclarationsResponse:
+      description: Paginated Response
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/CustomsDeclaration'
+          type: array
+      type: object
+    PaginatedCustomsItemsResponse:
+      description: Paginated Response
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/CustomsItem'
+          type: array
+      type: object
+    PaginatedManifestResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Manifest'
+          type: array
+      type: object
+    PaginatedOrderResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Order'
+          type: array
+      type: object
+    PaginatedParcelResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Parcel'
+          type: array
+      type: object
+    PaginatedRateResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Rate'
+          type: array
+      title: Paginated Rate Response.
+      type: object
+    PaginatedShipmentResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Shipment'
+          type: array
+      type: object
+    PaginatedTransactionResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Transaction'
+          type: array
+      type: object
+    Parcel:
+      properties:
+        distance_unit:
+          description: |-
+            **Required if template is not specified**<br>The unit used for length, width and
+                        height.
+          enum:
+            - cm
+            - in
+            - ft
+            - m
+            - mm
+            - yd
+          example: in
+          type: string
+        extra:
+          $ref: '#/components/schemas/ParcelExtra'
+          description: |-
+            An object holding optional extra services to be
+                        requested for each parcel in a multi-piece shipment. See the <a href="#parcels-extras">Parcel
+                        Extra table below</a> for all available services.
+        height:
+          description: |-
+            **Required if template is not specified**<br>Height of the parcel. Up to six digits in front
+                        and four digits after the decimal separator are accepted.
+          example: 1
+          type: string
+        length:
+          description: |-
+            **Required if template is not specified**<br>Length of the Parcel. Up to six digits in front
+                        and four digits after the decimal separator are accepted.
+          example: 1
+          type: string
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+          description: The unit used for weight.
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          type: string
+        object_created:
+          description: Date and time of Parcel creation.
+          example: '2014-07-09T02:19:13.174Z'
+          format: date-time
+          type: string
+        object_id:
+          description: Unique identifier of the given Parcel object. This ID is required to create a Shipment object.
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        object_owner:
+          description: Username of the user who created the Parcel object.
+          example: shippotle@goshippo.com
+          type: string
+        object_state:
+          description: A Parcel will only be valid when all required values have been sent and validated successfully.
+          example: VALID
+          type: string
+        object_updated:
+          description: 'Date and time of last Parcel update. Since you cannot update Parcels after they were created, this time stamp reflects the time when the Parcel was changed by Shippo''s systems for the last time, e.g., during sorting the dimensions given.'
+          example: '2014-07-09T02:19:13.174Z'
+          format: date-time
+          type: string
+        template:
+          description: |-
+            **If template is passed, length, width, height, and distance_unit are not required**<br>A <a class="" href="#parcel-templates">parcel
+                        template</a> is a predefined package used by one or multiple carriers.
+                        See the <a class="" href="#parcel-templates">parcel
+                        template table </a> for all available values and the corresponding
+                        tokens. When a template is given, the parcel dimensions do not have to be sent. The dimensions below will
+                        instead be used. The parcel weight is not affected by the use of a template.
+          enum:
+            - FedEx_Box_10kg
+            - FedEx_Box_25kg
+            - FedEx_Box_Extra_Large_1
+            - FedEx_Box_Extra_Large_2
+            - FedEx_Box_Large_1
+            - FedEx_Box_Large_2
+            - FedEx_Box_Medium_1
+            - FedEx_Box_Medium_2
+            - FedEx_Box_Small_1
+            - FedEx_Box_Small_2
+            - FedEx_Envelope
+            - FedEx_Padded_Pak
+            - FedEx_Pak_1
+            - FedEx_Pak_2
+            - FedEx_Tube
+            - FedEx_XL_Pak
+            - UPS_Box_10kg
+            - UPS_Box_25kg
+            - UPS_Express_Box
+            - UPS_Express_Box_Large
+            - UPS_Express_Box_Medium
+            - UPS_Express_Box_Small
+            - UPS_Express_Envelope
+            - UPS_Express_Hard_Pak
+            - UPS_Express_Legal_Envelope
+            - UPS_Express_Pak
+            - UPS_Express_Tube
+            - UPS_Laboratory_Pak
+            - UPS_MI_BPM
+            - UPS_MI_BPM_Flat
+            - UPS_MI_BPM_Parcel
+            - UPS_MI_First_Class
+            - UPS_MI_Flat
+            - UPS_MI_Irregular
+            - UPS_MI_Machinable
+            - UPS_MI_MEDIA_MAIL
+            - UPS_MI_Parcel_Post
+            - UPS_MI_Priority
+            - UPS_MI_Standard_Flat
+            - UPS_Pad_Pak
+            - UPS_Pallet
+            - USPS_FlatRateCardboardEnvelope
+            - USPS_FlatRateEnvelope
+            - USPS_FlatRateGiftCardEnvelope
+            - USPS_FlatRateLegalEnvelope
+            - USPS_FlatRatePaddedEnvelope
+            - USPS_FlatRateWindowEnvelope
+            - USPS_IrregularParcel
+            - USPS_LargeFlatRateBoardGameBox
+            - USPS_LargeFlatRateBox
+            - USPS_APOFlatRateBox
+            - USPS_LargeVideoFlatRateBox
+            - USPS_MediumFlatRateBox1
+            - USPS_MediumFlatRateBox2
+            - USPS_RegionalRateBoxA1
+            - USPS_RegionalRateBoxA2
+            - USPS_RegionalRateBoxB1
+            - USPS_RegionalRateBoxB2
+            - USPS_SmallFlatRateBox
+            - USPS_SmallFlatRateEnvelope
+            - USPS_SoftPack
+            - DHLeC_Irregular
+            - DHLeC_SM_Flats
+            - couriersplease_500g_satchel
+            - couriersplease_1kg_satchel
+            - couriersplease_3kg_satchel
+            - couriersplease_5kg_satchel
+            - Fastway_Australia_Satchel_A2
+            - Fastway_Australia_Satchel_A3
+            - Fastway_Australia_Satchel_A4
+            - Fastway_Australia_Satchel_A5
+          example: USPS_LargeFlatRateBox
+          type: string
+        test:
+          description: Indicates whether the object has been created in test mode.
+          type: boolean
+        weight:
+          example: 1
+          type: string
+          description: |-
+            Weight of the parcel. Up to six digits in front
+                        and four digits after the decimal separator are accepted.
+        width:
+          description: |-
+            **Required if template is not specified**<br>Width of the Parcel. Up to six digits in front
+                        and four digits after the decimal separator are accepted.
+          example: 1
+          type: string
+      required:
+        - length
+        - width
+        - height
+        - distance_unit
+        - weight
+        - mass_unit
+      type: object
+    ParcelCreateRequest:
+      properties:
+        distance_unit:
+          description: '**Required if template is not specified**'
+          enum:
+            - cm
+            - in
+            - ft
+            - m
+            - mm
+            - yd
+          example: in
+          type: string
+        height:
+          description: '**Required if template is not specified**'
+          example: 1
+          type: string
+        length:
+          description: '**Required if template is not specified**'
+          example: 1
+          type: string
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+        template:
+          description: '**If template is passed, length, width, height, and distance_unit are not required**'
+          enum:
+            - FedEx_Box_10kg
+            - FedEx_Box_25kg
+            - FedEx_Box_Extra_Large_1
+            - FedEx_Box_Extra_Large_2
+            - FedEx_Box_Large_1
+            - FedEx_Box_Large_2
+            - FedEx_Box_Medium_1
+            - FedEx_Box_Medium_2
+            - FedEx_Box_Small_1
+            - FedEx_Box_Small_2
+            - FedEx_Envelope
+            - FedEx_Padded_Pak
+            - FedEx_Pak_1
+            - FedEx_Pak_2
+            - FedEx_Tube
+            - FedEx_XL_Pak
+            - UPS_Box_10kg
+            - UPS_Box_25kg
+            - UPS_Express_Box
+            - UPS_Express_Box_Large
+            - UPS_Express_Box_Medium
+            - UPS_Express_Box_Small
+            - UPS_Express_Envelope
+            - UPS_Express_Hard_Pak
+            - UPS_Express_Legal_Envelope
+            - UPS_Express_Pak
+            - UPS_Express_Tube
+            - UPS_Laboratory_Pak
+            - UPS_MI_BPM
+            - UPS_MI_BPM_Flat
+            - UPS_MI_BPM_Parcel
+            - UPS_MI_First_Class
+            - UPS_MI_Flat
+            - UPS_MI_Irregular
+            - UPS_MI_Machinable
+            - UPS_MI_MEDIA_MAIL
+            - UPS_MI_Parcel_Post
+            - UPS_MI_Priority
+            - UPS_MI_Standard_Flat
+            - UPS_Pad_Pak
+            - UPS_Pallet
+            - USPS_FlatRateCardboardEnvelope
+            - USPS_FlatRateEnvelope
+            - USPS_FlatRateGiftCardEnvelope
+            - USPS_FlatRateLegalEnvelope
+            - USPS_FlatRatePaddedEnvelope
+            - USPS_FlatRateWindowEnvelope
+            - USPS_IrregularParcel
+            - USPS_LargeFlatRateBoardGameBox
+            - USPS_LargeFlatRateBox
+            - USPS_APOFlatRateBox
+            - USPS_LargeVideoFlatRateBox
+            - USPS_MediumFlatRateBox1
+            - USPS_MediumFlatRateBox2
+            - USPS_RegionalRateBoxA1
+            - USPS_RegionalRateBoxA2
+            - USPS_RegionalRateBoxB1
+            - USPS_RegionalRateBoxB2
+            - USPS_SmallFlatRateBox
+            - USPS_SmallFlatRateEnvelope
+            - USPS_SoftPack
+            - DHLeC_Irregular
+            - DHLeC_SM_Flats
+            - couriersplease_500g_satchel
+            - couriersplease_1kg_satchel
+            - couriersplease_3kg_satchel
+            - couriersplease_5kg_satchel
+            - Fastway_Australia_Satchel_A2
+            - Fastway_Australia_Satchel_A3
+            - Fastway_Australia_Satchel_A4
+            - Fastway_Australia_Satchel_A5
+          example: USPS_LargeFlatRateBox
+          type: string
+        weight:
+          example: 1
+          type: string
+        width:
+          description: '**Required if template is not specified**'
+          example: 1
+          type: string
+      required:
+        - length
+        - width
+        - height
+        - distance_unit
+        - weight
+        - mass_unit
+      type: object
+    ParcelExtra:
+      properties:
+        COD:
+          $ref: '#/components/schemas/COD'
+          description: |-
+            Specify collection on delivery details (UPS,
+                        and FedEx only).
+        insurance:
+          $ref: '#/components/schemas/ParcelInsurance'
+          description: |-
+            Specify collection on delivery details (UPS,
+                        and FedEx only).
+      type: object
+    ParcelInsurance:
+      description: ParcelInsurance Specify insurance details
+      properties:
+        amount:
+          description: Amount to be collected.
+          example: 5.5
+          type: string
+        content:
+          description: Specify package content for insurance.
+          example: Laptop
+          type: string
+        currency:
+          description: Currency for the amount to be collected. Currently only USD is supported for FedEx and UPS.
+          example: USD
+          type: string
+        provider:
+          description: Specify the carrier insurance to have Insurance provided by the carrier directly. Currently only FedEx and UPS are supported.
+          example: UPS
+          type: string
+      type: object
+    ParcelRequest:
+      properties:
+        distance_unit:
+          description: Required if template is not specified
+          enum:
+            - cm
+            - in
+            - ft
+            - m
+            - mm
+            - yd
+          example: in
+          type: string
+        extra:
+          $ref: '#/components/schemas/ParcelExtra'
+        height:
+          description: Required if template is not specified
+          example: 1
+          type: string
+        length:
+          description: Required if template is not specified
+          example: 1
+          type: string
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+        metadata:
+          description: A string of up to 100 characters that can be filled with any additional information you want to attach to the object.
+          type: string
+        template:
+          description: 'If template is passed, length, width, height, and distance_unit are not required'
+          enum:
+            - FedEx_Box_10kg
+            - FedEx_Box_25kg
+            - FedEx_Box_Extra_Large_1
+            - FedEx_Box_Extra_Large_2
+            - FedEx_Box_Large_1
+            - FedEx_Box_Large_2
+            - FedEx_Box_Medium_1
+            - FedEx_Box_Medium_2
+            - FedEx_Box_Small_1
+            - FedEx_Box_Small_2
+            - FedEx_Envelope
+            - FedEx_Padded_Pak
+            - FedEx_Pak_1
+            - FedEx_Pak_2
+            - FedEx_Tube
+            - FedEx_XL_Pak
+            - UPS_Box_10kg
+            - UPS_Box_25kg
+            - UPS_Express_Box
+            - UPS_Express_Box_Large
+            - UPS_Express_Box_Medium
+            - UPS_Express_Box_Small
+            - UPS_Express_Envelope
+            - UPS_Express_Hard_Pak
+            - UPS_Express_Legal_Envelope
+            - UPS_Express_Pak
+            - UPS_Express_Tube
+            - UPS_Laboratory_Pak
+            - UPS_MI_BPM
+            - UPS_MI_BPM_Flat
+            - UPS_MI_BPM_Parcel
+            - UPS_MI_First_Class
+            - UPS_MI_Flat
+            - UPS_MI_Irregular
+            - UPS_MI_Machinable
+            - UPS_MI_MEDIA_MAIL
+            - UPS_MI_Parcel_Post
+            - UPS_MI_Priority
+            - UPS_MI_Standard_Flat
+            - UPS_Pad_Pak
+            - UPS_Pallet
+            - USPS_FlatRateCardboardEnvelope
+            - USPS_FlatRateEnvelope
+            - USPS_FlatRateGiftCardEnvelope
+            - USPS_FlatRateLegalEnvelope
+            - USPS_FlatRatePaddedEnvelope
+            - USPS_FlatRateWindowEnvelope
+            - USPS_IrregularParcel
+            - USPS_LargeFlatRateBoardGameBox
+            - USPS_LargeFlatRateBox
+            - USPS_APOFlatRateBox
+            - USPS_LargeVideoFlatRateBox
+            - USPS_MediumFlatRateBox1
+            - USPS_MediumFlatRateBox2
+            - USPS_RegionalRateBoxA1
+            - USPS_RegionalRateBoxA2
+            - USPS_RegionalRateBoxB1
+            - USPS_RegionalRateBoxB2
+            - USPS_SmallFlatRateBox
+            - USPS_SmallFlatRateEnvelope
+            - USPS_SoftPack
+            - DHLeC_Irregular
+            - DHLeC_SM_Flats
+            - couriersplease_500g_satchel
+            - couriersplease_1kg_satchel
+            - couriersplease_3kg_satchel
+            - couriersplease_5kg_satchel
+            - Fastway_Australia_Satchel_A2
+            - Fastway_Australia_Satchel_A3
+            - Fastway_Australia_Satchel_A4
+            - Fastway_Australia_Satchel_A5
+          example: USPS_LargeFlatRateBox
+          type: string
+        test:
+          description: Indicates whether the object has been created in test mode.
+          type: boolean
+        weight:
+          example: 1
+          type: string
+        width:
+          description: Required if template is not specified
+          example: 1
+          type: string
+      required:
+        - length
+        - width
+        - height
+        - distance_unit
+        - weight
+        - mass_unit
+      type: object
+    ParcelTemplate:
+      description: ParcelTemplate represents the parcel as retrieved from the database
+      properties:
+        distance_unit:
+          enum:
+            - cm
+            - in
+            - ft
+            - m
+            - mm
+            - yd
+          example: in
+          type: string
+        height:
+          example: 1
+          type: string
+        is_default:
+          description: Can be null or can pass in a provider parcel token
+          type: boolean
+        length:
+          example: 1
+          type: string
+        mass_unit:
+          enum:
+            - g
+            - kg
+            - lb
+            - oz
+          example: lb
+          type: string
+        name:
+          example: Oven Box
+          type: string
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        template:
+          description: 'If template is passed, length, width, height, and distance_unit are not required'
+          enum:
+            - FedEx_Box_10kg
+            - FedEx_Box_25kg
+            - FedEx_Box_Extra_Large_1
+            - FedEx_Box_Extra_Large_2
+            - FedEx_Box_Large_1
+            - FedEx_Box_Large_2
+            - FedEx_Box_Medium_1
+            - FedEx_Box_Medium_2
+            - FedEx_Box_Small_1
+            - FedEx_Box_Small_2
+            - FedEx_Envelope
+            - FedEx_Padded_Pak
+            - FedEx_Pak_1
+            - FedEx_Pak_2
+            - FedEx_Tube
+            - FedEx_XL_Pak
+            - UPS_Box_10kg
+            - UPS_Box_25kg
+            - UPS_Express_Box
+            - UPS_Express_Box_Large
+            - UPS_Express_Box_Medium
+            - UPS_Express_Box_Small
+            - UPS_Express_Envelope
+            - UPS_Express_Hard_Pak
+            - UPS_Express_Legal_Envelope
+            - UPS_Express_Pak
+            - UPS_Express_Tube
+            - UPS_Laboratory_Pak
+            - UPS_MI_BPM
+            - UPS_MI_BPM_Flat
+            - UPS_MI_BPM_Parcel
+            - UPS_MI_First_Class
+            - UPS_MI_Flat
+            - UPS_MI_Irregular
+            - UPS_MI_Machinable
+            - UPS_MI_MEDIA_MAIL
+            - UPS_MI_Parcel_Post
+            - UPS_MI_Priority
+            - UPS_MI_Standard_Flat
+            - UPS_Pad_Pak
+            - UPS_Pallet
+            - USPS_FlatRateCardboardEnvelope
+            - USPS_FlatRateEnvelope
+            - USPS_FlatRateGiftCardEnvelope
+            - USPS_FlatRateLegalEnvelope
+            - USPS_FlatRatePaddedEnvelope
+            - USPS_FlatRateWindowEnvelope
+            - USPS_IrregularParcel
+            - USPS_LargeFlatRateBoardGameBox
+            - USPS_LargeFlatRateBox
+            - USPS_APOFlatRateBox
+            - USPS_LargeVideoFlatRateBox
+            - USPS_MediumFlatRateBox1
+            - USPS_MediumFlatRateBox2
+            - USPS_RegionalRateBoxA1
+            - USPS_RegionalRateBoxA2
+            - USPS_RegionalRateBoxB1
+            - USPS_RegionalRateBoxB2
+            - USPS_SmallFlatRateBox
+            - USPS_SmallFlatRateEnvelope
+            - USPS_SoftPack
+            - DHLeC_Irregular
+            - DHLeC_SM_Flats
+            - couriersplease_500g_satchel
+            - couriersplease_1kg_satchel
+            - couriersplease_3kg_satchel
+            - couriersplease_5kg_satchel
+            - Fastway_Australia_Satchel_A2
+            - Fastway_Australia_Satchel_A3
+            - Fastway_Australia_Satchel_A4
+            - Fastway_Australia_Satchel_A5
+          example: USPS_LargeFlatRateBox
+          type: string
+        weight:
+          example: 1
+          type: string
+        width:
+          example: 1
+          type: string
+      required:
+        - length
+        - width
+        - height
+        - distance_unit
+        - weight
+        - mass_unit
+      type: object
+    Pickup:
+      properties:
+        carrier_account:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: string
+        is_test:
+          type: boolean
+          description: boolean
+        location:
+          $ref: '#/components/schemas/Location'
+          description: object
+        metadata:
+          type: string
+          description: 'string, up to 100 characters'
+        object_created:
+          format: date-time
+          type: string
+        object_id:
+          type: string
+        object_updated:
+          format: date-time
+          type: string
+        requested_end_time:
+          format: date-time
+          type: string
+          description: 'datetime (UTC)<br>Format "2020-05-12T19:00:00Z"'
+        requested_start_time:
+          format: date-time
+          type: string
+          description: 'datetime (UTC)<br>Format "2020-05-12T19:00:00Z"'
+        transactions:
+          example: '[adcfdddf8ec64b84ad22772bce3ea37a]'
+          items:
+            type: string
+          type: array
+          description: array of <a href="#transactions">transaction</a> object_ids
+      required:
+        - carrier_account
+        - location
+        - transactions
+        - requested_start_time
+        - requested_end_time
+      type: object
+    PlatformCarrierOwnAccountCreation400Response:
+      properties:
+        detail:
+          example: 'Your registration unfortunately failed due to the following UPS error: Missing or invalid ControlID.'
+          type: string
+      type: object
+    PlatformCarrierOwnAccountCreationResponse:
+      properties:
+        account_id:
+          description: |2-
+
+             Unique identifier of the account. Please check the <a href="/docs/carrier-accounts">carrier
+                        accounts tutorial</a> page for the account_id per carrier. <br> To protect account information, this field will be masked in any API response. 
+          example: '****'
+          type: string
+        active:
+          type: boolean
+          description: |-
+            Determines whether the account is active. When
+                        creating a shipment, if no carrier_accounts are explicitly passed Shippo will query all carrier accounts
+                        that have this field set. By default, this is set to True.
+        carrier:
+          example: UPS
+          type: string
+          description: |-
+            Name of the carrier (as a token). Please check
+                        the <a href="/docs/carrier-accounts">carrier accounts tutorial</a> page for all supported carriers.
+        is_shippo_account:
+          example: false
+          type: boolean
+        metadata:
+          type: string
+        object_id:
+          example: 6aa34d5f6865448fbb1ee93636e98999
+          type: string
+          description: |-
+            Unique identifier of the carrier account
+                        object.
+        object_owner:
+          example: bob+22@gmail.com
+          type: string
+          description: |-
+            Username of the user who created the carrier
+                        account object.
+        parameters:
+          $ref: '#/components/schemas/UPSConnectExistingOwnAccountParameters'
+          description: |2-
+
+             An array of additional parameters for the account, such as e.g. password or token.
+                        Please check the <a href="/docs/carrier-accounts">carrier accounts tutorial</a> page for the parameters per carrier. <br> To protect account information, this field will be masked in any API response. 
+        test:
+          example: false
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+      type: object
+    PlatformCarrierOwnAccountListResponse:
+      properties:
+        next:
+          example: 'localhost:1132/?page=3&results=10'
+          type: string
+        previous:
+          example: 'localhost:1132/?page=1&results=10'
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/PlatformCarrierOwnAccountCreationResponse'
+          type: array
+      type: object
+    PlatformCarrierRegisterResponse:
+      properties:
+        account_id:
+          example: shippo_usps_account
+          type: string
+        active:
+          example: true
+          type: boolean
+        carrier:
+          example: USPS
+          type: string
+        is_shippo_account:
+          example: true
+          type: boolean
+        metadata:
+          type: string
+        object_id:
+          example: 6aa34d5f6865448fbb1ee93636e98999
+          type: string
+        object_owner:
+          example: bob+22@gmail.com
+          type: string
+        parameters:
+          example: {}
+          type: object
+        test:
+          example: false
+          type: boolean
+      type: object
+    PlatformCarrierRegistration400Response:
+      properties:
+        error:
+          description: 'This is just an example, this validation won''t be performed on USPS'
+          example: Only US shippers can create a new USPS account
+          type: string
+      type: object
+    Rate:
+      properties:
+        amount:
+          example: 5.5
+          type: string
+          description: |-
+            Final Rate price, expressed in the currency
+                        used in the sender's country.
+        amount_local:
+          example: 5.5
+          type: string
+          description: |-
+            Final Rate price, expressed in the currency
+                        used in the recipient's country.
+        arrives_by:
+          type: object
+        attributes:
+          items:
+            enum:
+              - BESTVALUE
+              - CHEAPEST
+              - FASTEST
+            type: string
+          type: array
+          description: |-
+            An array containing specific attributes of this
+                        Rate in context of the entire shipment. Attributes can be assigned 'CHEAPEST', 'FASTEST', or
+                        'BESTVALUE'.
+        carrier_account:
+          example: 078870331023437cb917f5187429b093
+          type: string
+          description: |-
+            Object ID of the carrier account that has been
+                        used to retrieve the rate.
+        currency:
+          example: USD
+          type: string
+          description: |-
+            Currency used in the sender's country, refers
+                        to "amount". The <a href="http://www.xe.com/iso4217.php">official ISO 4217</a> currency codes are used, e.g. "USD" or "EUR".
+        currency_local:
+          example: USD
+          type: string
+          description: |-
+            Currency used in the recipient's country,
+                        refers to "amount_local". The <a href="http://www.xe.com/iso4217.php">official ISO 4217</a> currency codes are used, e.g. "USD" or "EUR".
+        duration_terms:
+          example: Delivery in 1 to 3 business days
+          type: string
+          description: |-
+            Further clarification of the transit times.
+                        Often, this includes notes that the transit time as given in "days" is only an average, not a guaranteed
+                        time.
+        estimated_days:
+          example: 2
+          format: int64
+          type: integer
+          description: |-
+            Estimated transit time (duration) in days of
+                        the Parcel at the given servicelevel. Please note that this is not binding, but only an average value as
+                        given by the provider. Shippo is not able to guarantee any transit times.
+        messages:
+          items:
+            $ref: '#/components/schemas/RateMessage'
+          type: array
+          description: |-
+            An array containing elements of the following
+                        schema:<br>"code" (string): an identifier for the corresponding message
+                        (not always available")<br>"message" (string): a publishable message
+                        containing further information.
+        object_created:
+          format: date-time
+          type: string
+          description: Date and time of Rate creation.
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: |-
+            Unique identifier of the given Rate
+                        object.
+        object_owner:
+          example: pp@gmail.com
+          type: string
+          description: |-
+            Username of the user who created the rate
+                        object.
+        provider:
+          example: USPS
+          type: string
+          description: |-
+            Carrier offering the rate, e.g., "FedEx" or
+                        "Deutsche Post DHL".
+        provider_image_75:
+          example: 'https://cdn2.goshippo.com/providers/75/USPS.png'
+          type: string
+          description: |-
+            URL to the provider logo with max. dimensions
+                        of 75*75px. Please refer to the provider's Logo Usage Guidelines before using the logo.
+        provider_image_200:
+          example: 'https://cdn2.goshippo.com/providers/200/USPS.png'
+          type: string
+          description: |-
+            URL to the provider logo with max. dimensions
+                        of 200*200px. Please refer to the provider's Logo Usage Guidelines before using the logo.
+        servicelevel:
+          $ref: '#/components/schemas/ServiceLevel'
+          description: |-
+            Contains details regarding the service level
+                        for the given rate.
+        shipment:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        test:
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+      required:
+        - object_created
+        - object_id
+        - object_owner
+        - shipment
+        - attributes
+        - amount
+        - currency
+        - amount_local
+        - currency_local
+        - provider
+        - servicelevel
+        - carrier_account
+      type: object
+    RateMessage:
+      properties:
+        code:
+          type: string
+        source:
+          example: UPS
+          type: string
+        text:
+          example: 'RatedShipmentWarning: User Id and Shipper Number combination is not qualified to receive negotiated rates.'
+          type: string
+      type: object
+    Refund:
+      properties:
+        object_created:
+          format: date-time
+          type: string
+          description: Date and time of object creation.
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: Unique identifier of the given object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        object.
+        object_updated:
+          format: date-time
+          type: string
+          description: Date and time of last object update.
+        status:
+          enum:
+            - QUEUED
+            - PENDING
+            - SUCCESS
+            - ERROR
+          example: SUCCESS
+          type: string
+          description: Indicates the status of the Refund.
+        test:
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+        transaction:
+          example: 915d94940ea54c3a80cbfa328722f5a1
+          type: string
+          description: |-
+            Object ID of the Transaction to be
+                        refunded.
+      type: object
+    RefundRequestBody:
+      properties:
+        async:
+          example: false
+          type: boolean
+        transaction:
+          example: 915d94940ea54c3a80cbfa328722f5a1
+          type: string
+      required:
+        - transaction
+      type: object
+    ServiceLevel:
+      properties:
+        name:
+          example: Priority Mail Express
+          type: string
+        terms:
+          type: string
+        token:
+          example: usps_priority_express
+          type: string
+      type: object
+    Shipment:
+      description: Shipment represents the parcel as retrieved from the database
+      properties:
+        address_from:
+          $ref: '#/components/schemas/Address'
+          description: |-
+            ID of the Address object that should be used as
+                        sender Address.
+        address_return:
+          $ref: '#/components/schemas/Address'
+          description: |-
+            ID of the Address object where the shipment
+                        will be sent back to if it is not delivered (Only available for UPS, USPS, and Fedex shipments). <br /> If this field is not set, your shipments will be returned to
+                        the address_from. 
+        address_to:
+          $ref: '#/components/schemas/Address'
+          description: |-
+            ID of the Address object that should be used as
+                        recipient Address.
+        async:
+          type: boolean
+        carrier_accounts:
+          items:
+            type: object
+          type: array
+          description: |-
+            An array of object_ids of the carrier account
+                        objects to be used for getting shipping rates for this shipment. If no carrier account object_ids are set in
+                        this field, Shippo will attempt to generate rates using all the carrier accounts that have the 'active'
+                        field set.
+        customs_declaration:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: |-
+            ID of the Customs Declarations object for an
+                        international shipment.
+        extra:
+          $ref: '#/components/schemas/Extra'
+          description: |-
+            An object holding optional extra services to be
+                        requested. See the <a href="#shipments-extras">Shipment
+                        Extra table below</a> for all available services.
+        messages:
+          items:
+            properties:
+              code:
+                type: string
+              source:
+                example: UPS
+                type: string
+              text:
+                example: 'RatedShipmentWarning: User Id and Shipper Number combination is not qualified to receive negotiated rates.'
+                type: string
+            type: object
+          type: array
+          description: |-
+            An array containing elements of the following
+                        schema:<br>"code" (string): an identifier for the corresponding message
+                        (not always available")<br>"message" (string): a publishable message
+                        containing further information.
+        metadata:
+          example: Customer ID 123456
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        object_created:
+          format: date-time
+          type: string
+          description: Date and time of Shipment creation.
+        object_id:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+          description: Unique identifier of the given Shipment object.
+        object_owner:
+          example: pp@gmail.com
+          type: string
+          description: |-
+            Username of the user who created the Shipment
+                        object.
+        object_updated:
+          format: date-time
+          type: string
+          description: Date and time of last Shipment update.
+        parcels:
+          items:
+            $ref: '#/components/schemas/ParcelTemplate'
+          type: array
+          description: |-
+            Array of IDs of the Parcel objects to be
+                        shipped.
+        rates:
+          items:
+            $ref: '#/components/schemas/Rate'
+          type: array
+          description: |-
+            An array with all available rates. If <code>async</code> has been set to
+                        <code>false</code> in the request,
+                        this will be populated with all available rates in the response. Otherwise rates will be created
+                        asynchronously and this array will initially be empty.
+        shipment_date:
+          example: '2021-03-22T12:00:00Z'
+          type: string
+          description: |-
+            Date the shipment will be tendered to the
+                        carrier. Must be in the format "2014-01-18T00:35:03.463Z". Defaults to current date and time if no value is
+                        provided. Please note that some carriers require this value to be in the future, on a working day, or
+                        similar.
+        status:
+          enum:
+            - ERROR
+            - QUEUED
+            - SUCCESS
+            - STATUS
+          example: SUCCESS
+          type: string
+          description: |-
+            "Waiting" shipments have been successfully
+                        submitted but not yet been processed. "Queued" shipments are currently being processed. "Success" shipments
+                        have been processed successfully, meaning that rate generation has concluded. "Error" does not occur
+                        currently and is reserved for future use.
+        test:
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+      required:
+        - address_to
+        - address_from
+        - parcels
+        - object_created
+        - object_updated
+        - object_id
+        - object_owner
+        - status
+        - rates
+        - carrier_accounts
+        - messages
+        - metadata
+      type: object
+    ShipmentInsertRequestBody:
+      properties:
+        address_from:
+          $ref: '#/components/schemas/AddressRequestBody'
+        address_return:
+          $ref: '#/components/schemas/AddressRequestBody'
+        address_to:
+          $ref: '#/components/schemas/AddressRequestBody'
+        async:
+          type: boolean
+        customs_declaration:
+          example: adcfdddf8ec64b84ad22772bce3ea37a
+          type: string
+        extra:
+          $ref: '#/components/schemas/Extra'
+        metadata:
+          example: Customer ID 123456
+          type: string
+        parcels:
+          items:
+            $ref: '#/components/schemas/ParcelCreateRequest'
+          type: array
+        shipment_date:
+          example: '2021-03-22T12:00:00Z'
+          type: string
+      required:
+        - address_to
+        - address_from
+        - parcels
+      type: object
+    Track:
+      properties:
+        address_from:
+          $ref: '#/components/schemas/TrackingStatusLocation'
+          description: |-
+            The sender address with city, state, zip and
+                        country information.
+        address_to:
+          $ref: '#/components/schemas/TrackingStatusLocation'
+          description: |-
+            The recipient address with city, state, zip and
+                        country information.
+        carrier:
+          example: usps
+          type: string
+          description: |-
+            Name of the carrier of the shipment to track.
+                        See <a href="#carriers">Carriers</a>.
+        eta:
+          format: date-time
+          type: string
+          description: |-
+            The estimated time of arrival according to the
+                        carrier, this might be updated by carriers during the life of the shipment.
+        messages:
+          items:
+            type: string
+          type: array
+        metadata:
+          example: Order 000123
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        original_eta:
+          example: '2021-07-23T00:00:00Z'
+          format: date-time
+          type: string
+          description: |-
+            The estimated time of arrival according to the
+                        carrier at the time the shipment first entered the system.
+        servicelevel:
+          $ref: '#/components/schemas/ServiceLevel'
+          description: |-
+            The service level of the shipment as token and
+                        full name.
+        tracking_history:
+          items:
+            $ref: '#/components/schemas/TrackingStatus'
+          type: array
+          description: |-
+            A list of tracking events, following the same
+                        structure as <code>tracking_status</code>. It contains a full history of all tracking statuses, starting
+                        with the earlier tracking event first.
+        tracking_number:
+          example: 9.205590164917312e+21
+          type: string
+          description: Tracking number to track.
+        tracking_status:
+          $ref: '#/components/schemas/TrackingStatus'
+          description: |-
+            The latest tracking information of this
+                        shipment.
+        transaction:
+          type: string
+          description: |-
+            The <code>object_id</code> of the transaction associated with this tracking object. This
+                        field is visible only to the object owner of the transaction.
+      required:
+        - carrier
+        - tracking_number
+        - address_from
+        - address_to
+        - transaction
+        - original_eta
+        - eta
+        - servicelevel
+        - tracking_status
+        - tracking_history
+        - messages
+      type: object
+    TrackingStatus:
+      properties:
+        location:
+          $ref: '#/components/schemas/TrackingStatusLocation'
+        object_created:
+          format: date-time
+          type: string
+        object_id:
+          type: string
+        object_updated:
+          format: date-time
+          type: string
+        status:
+          example: DELIVERED
+          type: string
+        status_date:
+          example: '2016-07-23T00:00:00Z'
+          format: date-time
+          type: string
+        status_details:
+          example: Your shipment has been delivered at the destination mailbox.
+          type: string
+      required:
+        - object_created
+        - object_updated
+        - object_id
+        - status
+        - status_details
+        - status_date
+        - location
+      type: object
+    TrackingStatusLocation:
+      properties:
+        city:
+          example: Las Vegas
+          type: string
+        country:
+          example: US
+          type: string
+        state:
+          example: NV
+          type: string
+        zip:
+          example: 89101
+          type: string
+      type: object
+    TracksRequest:
+      properties:
+        carrier:
+          example: usps
+          type: string
+        metadata:
+          example: Order 000123
+          type: string
+        tracking_number:
+          example: 9.205590164917312e+21
+          type: string
+      required:
+        - carrier
+        - tracking_number
+      type: object
+    Transaction:
+      properties:
+        commercial_invoice_url:
+          type: string
+          description: |-
+            A URL pointing to the commercial invoice as a
+                        8.5x11 inch PDF file. A value will only be returned if the Transactions has been processed successfully and
+                        if the shipment is international.
+        eta:
+          type: string
+          description: |-
+            The estimated time of arrival according to the
+                        carrier.
+        label_url:
+          example: 'https://shippo-delivery.s3.amazonaws.com/70ae8117ee1749e393f249d5b77c45e0.pdf?Signature=vDw1ltcyGveVR1OQoUDdzC43BY8%3D&Expires=1437093830&AWSAccessKeyId=AKIAJTHP3LLFMYAWALIA'
+          type: string
+          description: |-
+            A URL pointing directly to the label in the
+                        format you've set in your settings. A value will only be returned if the Transactions has been processed
+                        successfully.
+        messages:
+          example: []
+          items:
+            type: object
+          type: array
+          description: |-
+            An array containing elements of the following
+                        schema:<br>"code" (string): an identifier for the corresponding message
+                        (not always available")<br>"message" (string): a publishable message
+                        containing further information.
+        metadata:
+          type: string
+          description: |-
+            A string of up to 100 characters that can be
+                        filled with any additional information you want to attach to the object.
+        object_created:
+          format: date-time
+          type: string
+          description: Date and time of Transaction creation.
+        object_id:
+          example: 915d94940ea54c3a80cbfa328722f5a1
+          type: string
+          description: |-
+            Unique identifier of the given Transaction
+                        object.
+        object_owner:
+          example: shippotle@goshippo.com
+          type: string
+          description: |-
+            Username of the user who created the
+                        Transaction object.
+        object_state:
+          enum:
+            - VALID
+            - INVALID
+          example: VALID
+          type: string
+          description: |-
+            Indicates the validity of the Transaction
+                        object based on the given data, regardless of what the corresponding carrier returns.
+        object_updated:
+          format: date-time
+          type: string
+          description: Date and time of last Transaction update.
+        qr_code_url:
+          example: 'https://shippo-delivery.s3.amazonaws.com/96_qr_code.pdf?Signature=PEdWrp0mFWAGwJp7FW3b%2FeA2eyY%3D&Expires=1385930652&AWSAccessKeyId=AKIAJTHP3LLFMYAWALIA'
+          type: string
+          description: |-
+            A URL pointing directly to the QR code in PNG
+                        format. A value will only be returned if requested using qr_code_requested flag and the carrier provides
+                        such an option.
+        rate:
+          example: ec9f0d3adc9441449c85d315f0997fd5
+          type: string
+          description: |-
+            ID of the Rate object for which a Label has to
+                        be obtained. Please note that only rates that are not older than 7 days can be purchased in order to ensure
+                        up-to-date pricing.
+        status:
+          enum:
+            - WAITING
+            - QUEUED
+            - SUCCESS
+            - ERROR
+            - REFUNDED
+            - REFUNDPENDING
+            - REFUNDREJECTED
+          example: SUCCESS
+          type: string
+          description: Indicates the status of the Transaction.
+        test:
+          type: boolean
+          description: |-
+            Indicates whether the object has been created
+                        in test mode.
+        tracking_number:
+          example: 9.499907123456124e+21
+          type: string
+          description: |-
+            The carrier-specific tracking number that can
+                        be used to track the Shipment. A value will only be returned if the Rate is for a trackable Shipment and if
+                        the Transactions has been processed successfully.
+        tracking_status:
+          example: UNKOWN
+          type: string
+          description: |-
+            Indicates the high level status of the
+                        shipment: 'UNKNOWN', 'DELIVERED', 'TRANSIT', 'FAILURE', 'RETURNED'.
+        tracking_url_provider:
+          example: 'https://tools.usps.com/go/TrackConfirmAction_input?origTrackNum=9499907123456123456781'
+          type: string
+          description: |-
+            A link to track this item on the
+                        carrier-provided tracking website. A value will only be returned if tracking is available and the carrier
+                        provides such a service.
+      type: object
+    TransactionRequestBody:
+      properties:
+        async:
+          example: false
+          type: boolean
+        label_file_type:
+          enum:
+            - PNG
+            - PNG_2.3x7.5
+            - PDF
+            - PDF_2.3x7.5
+            - PDF_4x6
+            - PDF_4x8
+            - PDF_A4
+            - PDF_A6
+            - ZPLII
+          example: PDF
+          type: string
+        metadata:
+          example: 'Order ID #12345'
+          type: string
+        rate:
+          example: ec9f0d3adc9441449c85d315f0997fd5
+          type: string
+      required:
+        - rate
+      type: object
+    UPSConnectExistingOwnAccountParameters:
+      properties:
+        account_number:
+          description: The UPS account number
+          example: 94567e
+          type: string
+        aia_country_iso2:
+          description: Only required if has_invoice is true. Country associated with the account that issued the invoice
+          example: US
+          type: string
+        billing_address_city:
+          example: San Francisco
+          type: string
+        billing_address_country_iso2:
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_state:
+          example: CA
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_street1:
+          example: 731 Market St
+          type: string
+        billing_address_street2:
+          description: Empty string acceptable for billing_address_street2
+          example: STE 200
+          type: string
+        billing_address_zip:
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        collec_country_iso2:
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        collec_zip:
+          description: Zip code of the collection/pickup address
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        company:
+          description: Company name. Full name is acceptable in this field if the user has no company name
+          example: Shippo
+          type: string
+        currency_code:
+          description: Only required if has_invoice is true. 3-letter currency code associated with invoice_value
+          example: USD
+          maxLength: 3
+          minLength: 3
+          type: string
+        email:
+          example: hippo@goshippo.com
+          type: string
+        full_name:
+          example: Shippo Meister
+          type: string
+        has_invoice:
+          description: true if user has been issued a UPS invoice within the past 90 days for the US or Canada; and 45 days for any other countries. User can use data from any of the last 3 invoices
+          type: boolean
+        invoice_controlid:
+          description: Only required if aia_country_iso2 is US and has_invoice is true.
+          example: 1234
+          maxLength: 4
+          minLength: 4
+          type: string
+        invoice_date:
+          description: Only required if has_invoice is true. Date the invoice was issued. yyyymmdd format
+          example: 20210529
+          type: string
+        invoice_number:
+          example: 1112234
+          maxLength: 15
+          minLength: 1
+          type: string
+        invoice_value:
+          description: Only required if has_invoice is true. Max 16 digits before decimal and 2 digits after decimal
+          example: 11.23
+          type: string
+        phone:
+          example: 1112223333
+          type: string
+        title:
+          description: 'User''s title, e.g. including but not limited to Manager, Doctor, Artist, Engineer, Mr, Ms, Mrs, Mx'
+          example: Manager
+          type: string
+        ups_agreements:
+          description: Whether the user agrees to the UPS terms and conditions or not. Error 400 will be returned if passed in as false
+          type: boolean
+      required:
+        - ups_agreements
+        - account_number
+        - title
+        - company
+        - full_name
+        - phone
+        - billing_address_street1
+        - billing_address_city
+        - billing_address_zip
+        - billing_address_state
+        - billing_address_country_iso2
+        - collec_zip
+        - collec_country_iso2
+        - has_invoice
+        - email
+      type: object
+    UPSCreateMasterAccountParameters:
+      properties:
+        billing_address_city:
+          example: San Francisco
+          type: string
+        billing_address_country_iso2:
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_state:
+          example: CA
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_street1:
+          example: 731 Market St
+          type: string
+        billing_address_street2:
+          description: Empty string acceptable for billing_address_street2
+          example: STE 200
+          type: string
+        billing_address_zip:
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        company:
+          description: Company name. Full name is acceptable in this field if the user has no company name
+          example: Shippo
+          type: string
+        email:
+          example: hippo@goshippo.com
+          type: string
+        full_name:
+          example: Shippo Meister
+          type: string
+        phone:
+          description: Needs to be a valid phone number and cannot be null
+          example: 1112223333
+          type: string
+        pickup_address_city:
+          description: User's pickup address city.
+          example: San Francisco
+          type: string
+        pickup_address_country_iso2:
+          description: User's pickup street 1.
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        pickup_address_same_as_billing_address:
+          example: false
+          type: boolean
+        pickup_address_state:
+          description: User's pickup address state.
+          example: CA
+          maxLength: 2
+          minLength: 2
+          type: string
+        pickup_address_street1:
+          description: User's pickup address street 1.
+          example: 731 Market St
+          type: string
+        pickup_address_street2:
+          description: User's pickup street 2.
+          example: STE 200
+          type: string
+        pickup_address_zip:
+          description: User's pickup address zip code.
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        ups_agreements:
+          description: Whether the user agrees to the UPS terms and conditions or not. Error 400 will be returned if passed in as false
+          type: boolean
+      required:
+        - ups_agreements
+        - billing_address_street1
+        - billing_address_city
+        - billing_address_zip
+        - billing_address_state
+        - billing_address_country_iso2
+        - pickup_address_street1
+        - pickup_address_city
+        - pickup_address_zip
+        - pickup_address_state
+        - pickup_address_country_iso2
+      type: object
+    UPSCreateNewOwnAccountParameters:
+      properties:
+        billing_address_city:
+          example: San Francisco
+          type: string
+        billing_address_country_iso2:
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_state:
+          example: CA
+          maxLength: 2
+          minLength: 2
+          type: string
+        billing_address_street1:
+          example: 731 Market St
+          type: string
+        billing_address_street2:
+          description: Empty string acceptable for billing_address_street2
+          example: STE 200
+          type: string
+        billing_address_zip:
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        company:
+          description: Company name. Full name is acceptable in this field if the user has no company name
+          example: Shippo
+          type: string
+        email:
+          example: hippo@goshippo.com
+          type: string
+        full_name:
+          example: Shippo Meister
+          type: string
+        phone:
+          example: 1112223333
+          type: string
+        pickup_address_city:
+          description: User's pickup address city. Only required if pickup_address_same_as_billing_address is false
+          example: San Francisco
+          type: string
+        pickup_address_country_iso2:
+          description: User's pickup street 1. Only required if pickup_address_same_as_billing_address is false
+          example: US
+          maxLength: 2
+          minLength: 2
+          type: string
+        pickup_address_same_as_billing_address:
+          example: false
+          type: boolean
+        pickup_address_state:
+          description: User's pickup address state. Only required if pickup_address_same_as_billing_address is false
+          example: CA
+          maxLength: 2
+          minLength: 2
+          type: string
+        pickup_address_street1:
+          description: User's pickup address street 1. Only required if pickup_address_same_as_billing_address is false
+          example: 731 Market St
+          type: string
+        pickup_address_street2:
+          description: 'User''s pickup street 2. Only used if pickup_address_same_as_billing_address is false, empty string acceptable'
+          example: STE 200
+          type: string
+        pickup_address_zip:
+          description: User's pickup address zip code. Only required if pickup_address_same_as_billing_address is false
+          example: 94103
+          maxLength: 5
+          minLength: 5
+          type: string
+        ups_agreements:
+          description: Whether the user agrees to the UPS terms and conditions or not. Error 400 will be returned if passed in as false
+          type: boolean
+      required:
+        - ups_agreements
+        - email
+        - full_name
+        - company
+        - phone
+        - billing_address_street1
+        - billing_address_city
+        - billing_address_zip
+        - billing_address_state
+        - billing_address_country_iso2
+        - pickup_address_same_as_billing_address
+      type: object
+    UpdateCarrierAccountRequest:
+      properties:
+        account_id:
+          type: string
+        active:
+          example: true
+          type: boolean
+        carrier:
+          example: ups
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - account_id
+      type: object
