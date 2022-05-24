@@ -2434,6 +2434,7 @@ components:
           type: string
           description: |2-
 
+
              B13A Option details are obtained by filing a B13A Canada Export Declaration via the
                         Canadian Export Reporting System (CERS). <a href="https://www.cbsa-asfc.gc.ca/export/reporting-declaration-eng.html" target="_blank" rel="noopener noreferrer"> More information on reporting commercial exports from Canada. </a> 
         b13a_number:
@@ -3937,6 +3938,7 @@ components:
         account_id:
           description: |2-
 
+
              Unique identifier of the account. Please check the <a href="/docs/carrier-accounts">carrier
                         accounts tutorial</a> page for the account_id per carrier. <br> To protect account information, this field will be masked in any API response. 
           example: '****'
@@ -3973,6 +3975,7 @@ components:
         parameters:
           $ref: '#/components/schemas/UPSConnectExistingOwnAccountParameters'
           description: |2-
+
 
              An array of additional parameters for the account, such as e.g. password or token.
                         Please check the <a href="/docs/carrier-accounts">carrier accounts tutorial</a> page for the parameters per carrier. <br> To protect account information, this field will be masked in any API response. 
