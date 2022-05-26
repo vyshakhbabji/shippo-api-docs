@@ -1242,20 +1242,20 @@
     }
   },
   "functions": [
-    "oasOpSuccessResponse",
-    "oasPathParam",
-    "oasOpParams",
-    "refSiblings",
-    "typedEnum",
     "oasDocumentSchema",
     "oasDiscriminator",
-    "oasOpFormDataConsumeCheck",
-    "oasUnusedComponent",
-    "oasOpIdUnique",
-    "oasTagDefined",
-    "oasOpSecurityDefined",
     "oasExample",
-    "oasSchema"
+    "oasOpFormDataConsumeCheck",
+    "oasOpIdUnique",
+    "oasOpParams",
+    "oasOpSecurityDefined",
+    "oasOpSuccessResponse",
+    "oasPathParam",
+    "oasSchema",
+    "oasTagDefined",
+    "oasUnusedComponent",
+    "refSiblings",
+    "typedEnum"
   ],
   "functionsDir": ".stoplight/custom-functions"
 }

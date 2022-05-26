@@ -3,7 +3,7 @@ ePost Global
 
 Special requirements for ePost Global domestic shipments
 
-API users attempting to retrieve rates or purchase labels for ePost Global domestic shipments must specify an additional line_items field within the Parcel object. Below is a sample parcel payload with line_items specified:
+API users (develoepr) attempting to retrieve rates or purchase labels for ePost Global domestic shipments must specify an additional line_items field within the Parcel object. Below is a sample parcel payload with line_items specified:
 
 ```
 {
