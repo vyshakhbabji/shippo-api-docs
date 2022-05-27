@@ -26,7 +26,8 @@ Java
 
 C#
 
-```
+
+```json
 curl https://api.goshippo.com/shipments/\
     -H "Authorization: ShippoToken <API_Token>"\
     -H "Content-Type: application/json"\
@@ -71,11 +72,13 @@ curl https://api.goshippo.com/shipments/\
             ],
             "async": false
         }'
+
 ```
 
 As usual, the Shipment request will return a list of Rates for you to select from. The Rate `amount` refers to the cost of the entire Shipment with multiple packages, not per package.
 
-```
+
+```json
 {
     "status": "SUCCESS",
     "object_created": "2013-12-01T06:24:20.121Z",
@@ -210,8 +213,8 @@ As usual, the Shipment request will return a list of Rates for you to select fro
     "metadata": "Customer ID 123456",
     "messages": []
 }
-
 ```
+
 
 How to Retrieve Labels for Each Package
 ---------------------------------------
