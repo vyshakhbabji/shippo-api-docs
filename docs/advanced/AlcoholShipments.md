@@ -210,3 +210,7 @@ The following carriers services are supported for alcohol shipments.
 -   Standard Overnight
 -   Priority Overnight
 -   First Overnight
+
+
+
+[Edit this page](https://github.com/goshippo/shippo-api-docs/blob/main/docs/advanced/AlcoholShipments.md)
