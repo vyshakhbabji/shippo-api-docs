@@ -237,7 +237,7 @@ paths:
           $ref: '#/components/responses/singleBatchResponse'
       summary: Create a batch
       tags:
-        - Addresses
+        - Batches
   '/batches/{BatchId}':
     get:
       description: Retrieve an existing batch object.
