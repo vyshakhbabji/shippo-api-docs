@@ -9,148 +9,6 @@ security:
   - APIKeyHeader: []
 servers:
   - url: 'https://api.goshippo.com'
-tags:
-  - name: Addresses
-    description: <SchemaDefinition schemaRef="#/components/schemas/Address"/>
-  - name: Parcels
-    description: <SchemaDefinition schemaRef="#/components/schemas/Parcel"/>
-  - name: Shipments
-    description: |-
-      The heart of the Shippo API, a shipment is made up of "to" and "from" addresses and the parcel to be shipped. 
-      Once created, a shipment object can be used to retrieve shipping rates and purchase a shipping label.
-      <SchemaDefinition schemaRef="#/components/schemas/Shipment"/>
-  - name: Rates
-    description: |-
-      A rate is an available service of a shipping provider for a given shipment, typically including the price and 
-      transit time.
-      <SchemaDefinition schemaRef="#/components/schemas/Rate"/>
-  - name: Transactions
-    x-displayName: Transactions (shipping labels)
-    description: |-
-      A transaction is the purchase of a shipping label from a shipping provider for a specific service.
-      <SchemaDefinition schemaRef="#/components/schemas/Transaction"/>
-  - name: Customs Items
-    description: |-
-      Customs items are distinct items in your international shipment parcel.
-      <SchemaDefinition schemaRef="#/components/schemas/CustomsItem"/>
-  - name: Customs Declarations
-    description: |-
-      Customs declarations are relevant information, including one or multiple customs items, you need to provide for 
-      customs clearance for your international shipments.
-      <SchemaDefinition schemaRef="#/components/schemas/CustomsDeclaration"/>
-  - name: Refunds
-    description: |-
-      Refunds are reimbursements for successfully created but unused shipping labels or other charges.
-      <SchemaDefinition schemaRef="#/components/schemas/Refund"/>
-  - name: Manifests
-    description: |-
-      Manifests are close-outs of shipping labels of a certain day. Some carriers require manifests to properly process 
-      the shipments.
-      <SchemaDefinition schemaRef="#/components/schemas/Manifest"/>
-  - name: Carrier Own Accounts
-    description: |-
-      Carrier accounts are used as credentials to retrieve shipping rates and purchase labels from a shipping provider.
-      <p style="text-align: center; background-color: #F2F3F4;"></br>
-      To protect account information, we will mask the account ID and parameters in the response objects
-      </br></br></p>
-      <SchemaDefinition schemaRef="#/components/schemas/PlatformCarrierOwnAccountCreationResponse"/>
-  - name: Carrier Master Accounts
-    description: <SchemaDefinition schemaRef="#/components/schemas/CarrierRegisterStatusResponse"/>
-  - name: Tracking Status
-    description: |-
-      <p style="text-align: center; background-color: #F2F3F4;"></br>
-      If you purchased your shipping label through Shippo, you can also get all the tracking details of your Shipment 
-      from the <a href="#tag/Transactions">Transaction</a> object.
-      </br></br></p>
-      Tracking Status objects are used to track shipments.
-
-      When using your <a href="https://goshippo.com/docs/auth">Test</a> token for tracking, you need to use Shippo's 
-      predefined tokens for testing different tracking statuses. You can find more information in our 
-      <a href="https://goshippo.com/docs/tracking#test-mode">Tracking tutorial</a> on how to do this, and what the 
-      payloads look like.      
-      <SchemaDefinition schemaRef="#/components/schemas/Track"/>
-  - name: Batches
-    description: |-
-      The batch endpoint allows you to create and purchase many shipments in one API call. After creating the batch, 
-      retrieve the batch to verify that all shipments are valid. You can add and remove shipments after the batch has 
-      been created. When all shipments are valid you can purchase the batch and retrieve the shipping labels.
-      <SchemaDefinition schemaRef="#/components/schemas/Batch"/>
-  - name: Orders
-    x-displayName: Orders (beta)
-    description: <SchemaDefinition schemaRef="#/components/schemas/Order"/>
-  - name: Pickups
-    description: |-
-      Shippoâ€™s pickups endpoint allows you to schedule pickups with USPS and DHL Express for eligible shipments that 
-      you have already created.
-      <SchemaDefinition schemaRef="#/components/schemas/Pickup"/>
-  - name: Service Groups
-    description: |-
-      A service group represents a set of service levels that can be grouped together to organize Rates at Checkout 
-      shipping options.
-      <SchemaDefinition schemaRef="#/components/schemas/ServiceGroup"/>
-  - name: Carrier Parcel Templates
-    description: |-
-      A carrier parcel template represents a package used for shipping that has preset dimensions defined by a carrier. 
-      Some examples of a carrier parcel template include USPS Flat Rate Box and Fedex Small Pak. If the shipment is 
-      using a carrier parcel template, the rates returned may be limited to the carrier that provides the box. User 
-      parcel templates can be created using a carrier parcel template, where the dimensions will be copied in but the 
-      weight can be configured.
-      <SchemaDefinition schemaRef="#/components/schemas/CarrierParcelTemplateStruct"/>
-  - name: User Parcel Templates
-    description: |-
-      A user parcel template represents a package used for shipping that has preset dimensions and attributes defined 
-      by the user. They are useful for capturing attributes of parcel-types you frequently use for shipping, allowing 
-      them to be defined once and then used for many shipments. These parcel templates can also be used for live rates.
-
-      User parcel templates can be created using a carrier parcel template, where the dimensions will be copied from 
-      the Carrier presets, but the weight can be configured by the user.
-      <SchemaDefinition schemaRef="#/components/schemas/UserParcelTemplate"/>
-  - name: Rates at Checkout
-    description: |-
-      Rates at Checkout is a feature that allows merchants to set up curated shipping options for customers in the 
-      checkout flow based on data in the shopping cart. The request must include the to address and item information. 
-      Optional fields are the from address and package information. If the optional fields are not included, the 
-      service will use the default address and/or package configured for Rates at Checkout. The response will be a 
-      list of shipping options based on the Service Group configuration
-      (see <a href="#tag/Service-Groups">Service Group configuration</a> for details).
-      <SchemaDefinition schemaRef="#/components/schemas/LiveRate"/>
-  - name: Carriers
-    description: <SchemaDefinition schemaRef="#/components/schemas/Carriers"/>
-  - name: Service Levels
-    description: <SchemaDefinition schemaRef="#/components/schemas/ServiceLevelEnumSet"/>
-  - name: Parcel Templates
-    description: |-
-      A predefined package used by one or multiple carriers.  See below for all available values and the corresponding tokens. 
-      When a template is given, the parcel dimensions do not have to be sent, the dimensions below will instead be used. 
-      The parcel weight is not affected by the use of a template.
-      <SchemaDefinition schemaRef="#/components/schemas/ParcelTemplateEnumSet"/>
-x-tagGroups:
-  - name: Resources
-    tags:
-      - Addresses
-      - Parcels
-      - Shipments
-      - Rates
-      - Transactions
-      - Customs Items
-      - Customs Declarations
-      - Refunds
-      - Manifests
-      - Carrier Own Accounts
-      - Carrier Master Accounts
-      - Tracking Status
-      - Batches
-      - Orders
-      - Pickups
-      - Service Groups
-      - Carrier Parcel Templates
-      - User Parcel Templates
-      - Rates at Checkout
-  - name: Enums
-    tags:
-      - Carriers
-      - Service Levels
-      - Parcel Templates
 paths:
   /addresses:
     get:
@@ -164,9 +22,9 @@ paths:
         '200':
           $ref: '#/components/responses/paginatedAddressResponse'
       summary: List all addresses
-      tags:
-        - Addresses
       x-extension-1: null
+      tags:
+        - Customer
     post:
       description: Creates a new address object
       operationId: CreateAddress
@@ -200,8 +58,6 @@ paths:
         '200':
           $ref: '#/components/responses/singleAddressResponse'
       summary: Retrieve an address
-      tags:
-        - Addresses
   '/addresses/{AddressId}/validate':
     get:
       description: Validate an existing address by object id
@@ -236,8 +92,6 @@ paths:
         '200':
           $ref: '#/components/responses/singleBatchResponse'
       summary: Create a batch
-      tags:
-        - Batches
   '/batches/{BatchId}':
     get:
       description: Retrieve an existing batch object.
