@@ -18,7 +18,7 @@ There are a variety of ways to integrate Shippo into your platform. Depending on
 | **Integration Type** | **White Label** | **Standalone Accounts** | **Shippo Web App Sync** |
 | --- | --- | --- | --- |
 | **User Interface** | Customer uses your platform | Customer uses your platform | Customer uses Shippo web app |
-| **Billing & Customer Support** | Platform pays Shippo,\
+| **Billing & Customer Support** | Platform pays Shippo |
 platform supports customers | Shippo bills and supports customers directly | Shippo bills and supports customers directly |
 | **Integration Effort** | Higher | Average | Low |
 |  | [**Explore Docs**](https://goshippo.com/docs/white-label-integration/) | [**Explore Docs**](https://goshippo.com/docs/standalone-shippo-accounts/) | [**Explore Docs**](https://goshippo.com/docs/web-app-order-sync/) |
