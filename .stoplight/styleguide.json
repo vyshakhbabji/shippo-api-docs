@@ -755,7 +755,7 @@
       "given": [
         "#All_Example_Schema"
       ],
-      "severity": "warn",
+      "severity": "error",
       "then": {
         "function": "oasExample",
         "functionOptions": {
