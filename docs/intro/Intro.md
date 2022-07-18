@@ -1,7 +1,7 @@
 Shippo API Documentation
 ========================
 
-Welcome to the Shippo API documentation. Here you'll find tutorials and references to get you shipping with Shippo.
+Welcome to the Shippo API documentation! Here you'll find tutorials and references to get you shipping with Shippo.
 
 [
 
