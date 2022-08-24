@@ -182,7 +182,9 @@ tags:
       The parcel weight is not affected by the use of a template.
       <SchemaDefinition schemaRef="#/components/schemas/ParcelTemplateEnumSet"/>
   - name: Merchants
-    description: Creates a Shippo account for the partner platform account
+    description: |-
+      Creates a Shippo account for the partner platform account
+      <SchemaDefinition schemaRef="#/components/schemas/Merchant"/>
   - name: Carrier Master Accounts
     description: <SchemaDefinition schemaRef="#/components/schemas/CarrierMasterAccountRegistrationStatus"/>
 x-tagGroups:
@@ -642,9 +644,15 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/CarrierMasterAccountCanadaPostCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountChronopostCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountColissimoCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountCorreosCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountDeutschePostCreateRequest'
                 - $ref: '#/components/schemas/CarrierMasterAccountDHLExpressCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountDpdDeCreateRequest'
                 - $ref: '#/components/schemas/CarrierMasterAccountDPDUKCreateRequest'
                 - $ref: '#/components/schemas/CarrierMasterAccountHermesUKCreateRequest'
+                - $ref: '#/components/schemas/CarrierMasterAccountPosteItalianeCreateRequest'
                 - $ref: '#/components/schemas/CarrierMasterAccountUPSCreateRequest'
                 - $ref: '#/components/schemas/CarrierMasterAccountUSPSCreateRequest'
         description: Examples.
@@ -2716,6 +2724,42 @@ components:
         - carrier
         - parameters
       type: object
+    CarrierMasterAccountChronopostCreateRequest:
+      title: Chronopost master account
+      properties:
+        carrier:
+          example: 'chronopost'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CarrierMasterAccountColissimoCreateRequest:
+      title: Colissimo master account
+      properties:
+        carrier:
+          example: 'colissimo'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CarrierMasterAccountCorreosCreateRequest:
+      title: Correos master account
+      properties:
+        carrier:
+          example: 'correos'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
     CarrierMasterAccountDHLExpressCreateRequest:
       title: DHL Express master account
       properties:
@@ -2740,11 +2784,47 @@ components:
         - carrier
         - parameters
       type: object
+    CarrierMasterAccountDeutschePostCreateRequest:
+      title: Deutsche Post master account
+      properties:
+        carrier:
+          example: 'deustche_post'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CarrierMasterAccountDpdDeCreateRequest:
+      title: DPD DE master account
+      properties:
+        carrier:
+          example: 'dpd_de'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
     CarrierMasterAccountHermesUKCreateRequest:
       title: Hermes UK master account
       properties:
         carrier:
           example: 'hermes_uk'
+          type: string
+        parameters:
+          type: object
+      required:
+        - carrier
+        - parameters
+      type: object
+    CarrierMasterAccountPosteItalianeCreateRequest:
+      title: Poste Italiane master account
+      properties:
+        carrier:
+          example: 'poste_italiane'
           type: string
         parameters:
           type: object
