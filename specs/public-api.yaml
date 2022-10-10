@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.0
 info:
-  title: Shippo external API.
+  title: Shippo external API Documents
   version: 1.0.0
   x-logo:
     url: https://285902-883982-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2021/06/Shippo-logo.svg
